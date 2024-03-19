@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { MdCancel } from 'react-icons/md';
 import Image from 'next/image';
 import { filterData, getFilterValues } from '../utils/filterData';
+import NoResult from '../public/noResult.jpg';
 
 
 export default function SearchFilters() {
@@ -96,14 +97,14 @@ export default function SearchFilters() {
                       </Text>
                     </Box>
                   ))}
-                  {!loading && !locationData?.length && (
+                  {/* {!loading && !locationData?.length && (
                     <Flex justifyContent='center' alignItems='center' flexDir='column' marginTop='5' marginBottom='5' >
-                      <Image src={noresult} />
+                      <Image src={NoResult} />
                       <Text fontSize='xl' marginTop='3'>
                         Waiting to search!
                       </Text>
                     </Flex>
-                  )}
+                  )} */}
                 </Box>
               )}
             </Flex>

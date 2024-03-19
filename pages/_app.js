@@ -4,6 +4,7 @@ import Router from 'next/router';
 import Head from 'next/head';
 import NProgress from 'nprogress';
 import Layout from '../components/Layout.jsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 export default function App({ Component, pageProps }) {
