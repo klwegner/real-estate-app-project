@@ -82,7 +82,8 @@ export default function SearchFilters() {
               )}
               {loading && <Spinner margin='auto' marginTop='3' />}
               {showLocations && (
-                <Box height='300px' overflow='auto'>
+                /* changed below to maxHeight from height, fixed issue of big grey box beneath */
+                <Box maxHeight='300px' overflow='auto'>
                   {locationData?.map((location) => (
                     <Box
                       key={location.id}
