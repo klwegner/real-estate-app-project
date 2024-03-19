@@ -27,7 +27,7 @@ const Home = ({ propertiesForSale, propertiesForRent }) => (
     <Banner
       purpose='RENT A HOME'
       title1='Rental Homes for'
-      title2='Everyone'
+      title2='The Ridiculously Wealthy'
       desc1=' Explore from Apartments, builder floors, villas'
       desc2='and more'
       buttonText='Explore Renting'
@@ -39,8 +39,8 @@ const Home = ({ propertiesForSale, propertiesForRent }) => (
     </Flex>
     <Banner
       purpose='BUY A HOME'
-      title1=' Find, Buy & Own Your'
-      title2='Dream Home'
+      title1=' Find & Buy Your'
+      title2='Costly Dream Home'
       desc1=' Explore from Apartments, land, builder floors,'
       desc2=' villas and more'
       buttonText='Explore Buying'
