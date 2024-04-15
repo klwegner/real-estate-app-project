@@ -5,11 +5,13 @@ import Head from 'next/head';
 import NProgress from 'nprogress';
 import Layout from '../components/Layout.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
+// import { AuthProviderWrapper } from "@/auth.context.js";
 
 
 export default function App({ Component, pageProps }) {
   return (
-  <>
+    <>
+
     <Head>
       
     </Head>

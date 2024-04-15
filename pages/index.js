@@ -1,12 +1,107 @@
 
-import RentalPic from '../public/rentalpic.jpeg';
-import BuyPic from '../public/buypic.jpeg';
+import RentalPic from '../public/rentalpic.png';
+import BuyPic from '../public/buypic.png';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Flex, Box, Text, Button } from '@chakra-ui/react';
-import { baseUrl, fetchApi } from '../utils/fetchAPI';
 import Property from '@/components/Property';
-import Dubai from '../public/Dubai.jpg';
+import axios from "axios";
+import React, { useState, useEffect } from 'react';
+
+const Home = () => {
+
+  const [propertiesForSale, setPropertiesForSale] = useState([]);
+  const [propertiesForRent, setPropertiesForRent] = useState([]);
+
+  useEffect(() => {
+    // Only fetch if logged in
+      const fetchRentalProperties = async () => {
+        const API_URL = 'http://localhost:5005';
+        try {
+          const response = await axios.get(`${API_URL}/api/properties/rentals`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          });
+          if (response.status === 200 && response.data) {
+            const properties  = response.data;
+
+            setPropertiesForRent(properties);
+      // console.log(propertiesForRent);         
+}
+        } catch (error) {
+console.error(error);        }
+      };
+
+      const fetchForSaleProperties = async () => {
+        const API_URL = 'http://localhost:5005';
+        try {
+          const response = await axios.get(`${API_URL}/api/properties/forSale`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+            },
+          });
+          if (response.status === 200 && response.data) {
+            const properties  = response.data;
+
+            setPropertiesForSale(properties);
+      // console.log(propertiesForSale);         
+}
+        } catch (error) {
+console.error(error);        }
+      };
+      fetchRentalProperties();
+      fetchForSaleProperties();
+    
+  },[]);
+
+
+  return (
+ 
+  <Box backgroundColor="transparent">
+    <Banner
+      purpose='RENT A HOME'
+      title1='Rental Homes With'
+      title2='A Luxurious Feel'
+      desc1='Explore Apartments, Townhomes, Villas'
+      desc2='and more'
+      buttonText='Rental Properties'
+      linkName='/search?purpose=for-rent'
+      imageUrl={RentalPic}
+    />
+    <Flex flexWrap='wrap'>
+      {propertiesForRent.map((property) =>  {
+      <Property property={property} key={property._id} />  }
+)}
+    
+    </Flex>
+    <Banner
+      purpose='BUY A HOME'
+      title1='Find & Buy Your'
+      title2='Dream Home'
+      desc1='Explore Apartments, Land, Penthouses,'
+      desc2='villas and more'
+      buttonText='Properties for Sale'
+      linkName='/search?purpose=for-sale'
+      imageUrl={BuyPic}
+    />
+    <Flex flexWrap='wrap'>
+    
+      {propertiesForSale.map((property) => <Property property={property} key={property._id} />)}
+    </Flex>
+
+
+
+  </Box>
+
+  );
+};
+
+export default Home;
+
+
+
+
 
 
 export const Banner = ({ purpose, title1, title2, desc1, desc2, buttonText, linkName, imageUrl }) => (
@@ -24,48 +119,44 @@ export const Banner = ({ purpose, title1, title2, desc1, desc2, buttonText, link
 );
 
 
-const Home = ({ propertiesForSale, propertiesForRent }) => (
-  <Box backgroundColor="transparent">
-    <Banner
-      purpose='RENT A HOME'
-      title1='Rental Homes With'
-      title2='A Luxurious Feel'
-      desc1='Explore Apartments, Townhomes, Villas'
-      desc2='and more'
-      buttonText='Rental Properties'
-      linkName='/search?purpose=for-rent'
-      imageUrl={RentalPic}
-    />
-    <Flex flexWrap='wrap'>
-      {propertiesForRent.map((property) => <Property property={property} key={property.id} />)}
-    </Flex>
-    <Banner
-      purpose='BUY A HOME'
-      title1='Find & Buy Your'
-      title2='Dream Home'
-      desc1='Explore Apartments, Land, Penthouses,'
-      desc2='villas and more'
-      buttonText='Properties for Sale'
-      linkName='/search?purpose=for-sale'
-      imageUrl={BuyPic}
-    />
-    <Flex flexWrap='wrap'>
-    
-      {propertiesForSale.map((property) => <Property property={property} key={property.id} />)}
-    </Flex>
-  </Box>
-);
+// export async function getStaticProps() {
+//   const API_URL = 'http://localhost:5005'; 
 
-export async function getStaticProps() {
-  const propertyForSale = await fetchApi(`${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-sale&hitsPerPage=6`);
-  const propertyForRent = await fetchApi(`${baseUrl}/properties/list?locationExternalIDs=5002&purpose=for-rent&hitsPerPage=6`);
+//   try {
+//     const response = await axios.get(`${API_URL}/api/properties`, {
+//       headers: {
+//         Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+//       },
+//     });
 
-  return {
-    props: {
-      propertiesForSale: propertyForSale?.hits,
-      propertiesForRent: propertyForRent?.hits,
-    },
-  };
-}
+//     if (response.status === 200 && response.data) {
+//       const properties = response.data;
+//       console.log(properties);
 
-export default Home;
+//       // Sort properties by property type ("For Sale" or "Rental")
+//       const propertiesForSale = properties.filter(
+//         (property) => property.propertyType === "For Sale"
+//       );
+//       const propertiesForRent = properties.filter(
+//         (property) => property.propertyType === "Rental"
+//       );
+
+//       return {
+//         props: {
+//           propertiesForSale,
+//           propertiesForRent,
+//         },
+//       };
+//     }
+//   } catch (error) {
+//     console.error(error);
+//   }
+
+//   // Handle errors or return empty arrays if data fetching fails
+//   return {
+//     props: {
+//       propertiesForSale: [],
+//       propertiesForRent: [],
+//     },
+//   };
+// }

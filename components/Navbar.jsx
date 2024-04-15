@@ -1,9 +1,15 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu, MenuButton, MenuList, MenuItem, IconButton, Flex, Box, Spacer } from '@chakra-ui/react';
+import { Menu, MenuButton, MenuList, MenuItem, IconButton, Flex, Box, Spacer, Button } from '@chakra-ui/react';
 import { FcMenu, FcHome, FcAbout } from 'react-icons/fc';
 import { BsSearch } from 'react-icons/bs';
 import { FiKey } from 'react-icons/fi';
+import { IoIosAdd } from "react-icons/io";
+import { FaDoorOpen } from "react-icons/fa";
+import LogoutButton from './logoutButton';
+
+
+
 
 const Navbar = () => (
 
@@ -24,6 +30,14 @@ const Navbar = () => (
         <MenuItem icon={<FcHome/>}>Home</MenuItem>
     </Link>
 
+    <Link href="/loginPage" passHref>
+        <MenuItem icon={<FaDoorOpen />}>Login</MenuItem>
+    </Link>
+
+    <Link href="/createProperty" passHref>
+        <MenuItem icon={<IoIosAdd />}>Add Property</MenuItem>
+    </Link>
+
     <Link href="/search" passHref>
         <MenuItem icon={<BsSearch/>}>Search</MenuItem>
     </Link>
@@ -35,6 +49,10 @@ const Navbar = () => (
     <Link href="/search?purpose=for-rent" passHref>
         <MenuItem icon={<FiKey/>}>Rent</MenuItem>
     </Link>
+
+    <LogoutButton/>
+
+
 
 </MenuList>
 </Menu>
