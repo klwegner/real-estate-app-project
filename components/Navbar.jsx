@@ -1,12 +1,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Menu, MenuButton, MenuList, MenuItem, IconButton, Flex, Box, Spacer, Button } from '@chakra-ui/react';
-import { FcMenu, FcHome, FcAbout } from 'react-icons/fc';
+import { FcMenu } from 'react-icons/fc';
 import { BsSearch } from 'react-icons/bs';
 import { FiKey } from 'react-icons/fi';
 import { IoIosAdd } from "react-icons/io";
-import { FaDoorOpen } from "react-icons/fa";
-import LogoutButton from './logoutButton';
+import { FaDoorOpen, FaHome } from "react-icons/fa";
+import { IoLogOutSharp } from "react-icons/io5";
+import { GiMoneyStack } from "react-icons/gi";
+
 
 
 
@@ -27,7 +29,7 @@ const Navbar = () => (
 <MenuList>
 
     <Link href="/" passHref>
-        <MenuItem icon={<FcHome/>}>Home</MenuItem>
+        <MenuItem icon={<FaHome />}>Home</MenuItem>
     </Link>
 
     <Link href="/loginPage" passHref>
@@ -42,18 +44,17 @@ const Navbar = () => (
         <MenuItem icon={<BsSearch/>}>Search</MenuItem>
     </Link>
 
-    <Link href="/search?purpose=for-sale" passHref>
-        <MenuItem icon={<FcAbout/>}>Buy</MenuItem>
+    <Link href="/search?propertyType=For+Sale" passHref>
+        <MenuItem icon={<GiMoneyStack />}>Buy</MenuItem>
     </Link>
 
-    <Link href="/search?purpose=for-rent" passHref>
+    <Link href="/search?propertyType=Rental" passHref>
         <MenuItem icon={<FiKey/>}>Rent</MenuItem>
     </Link>
 
-    <LogoutButton/>
-
-
-
+    <Link href="/" passHref onClick={handleLogout}>
+    <MenuItem icon={<IoLogOutSharp />}>Logout</MenuItem>
+    </Link>
 </MenuList>
 </Menu>
     </Flex>
@@ -61,3 +62,11 @@ const Navbar = () => (
 )
 
 export default Navbar;
+
+  
+    const handleLogout = () => {
+      console.log("logging out?");
+      localStorage.removeItem("authToken");
+      router.push("/");
+    };
+  

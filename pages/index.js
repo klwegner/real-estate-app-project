@@ -14,7 +14,6 @@ const Home = () => {
   const [propertiesForRent, setPropertiesForRent] = useState([]);
 
   useEffect(() => {
-    // Only fetch if logged in
       const fetchRentalProperties = async () => {
         const API_URL = 'http://localhost:5005';
         try {
@@ -70,9 +69,7 @@ console.error(error);        }
       imageUrl={RentalPic}
     />
     <Flex flexWrap='wrap'>
-      {propertiesForRent.map((property) =>  {
-      <Property property={property} key={property._id} />  }
-)}
+      {propertiesForRent.map((property) => <Property property={property} key={property._id} />  )}
     
     </Flex>
     <Banner

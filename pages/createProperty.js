@@ -1,15 +1,10 @@
+'use client';
+
 import { useState } from "react";
 import axios from "axios";
-import { Flex, Box, Text, Icon } from '@chakra-ui/react';
-import { redirect } from 'next/navigation'
-
-
-
-//seems to work without htis--  delete later
-// import { AuthContext } from "../auth.context";
-
-//made env file work later
-// const API_URL = process.env.DATABASE_URI;
+import { Flex, Box, Text, Input, Textarea, Select, Button, Divider  } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
+import { CldUploadButton   } from 'next-cloudinary';
 
 const API_URL = 'http://localhost:5005';
 
@@ -25,7 +20,10 @@ const [address, setAddress] = useState("");
   const [hasHOA, setHasHOA] = useState(null);
   const [amenitiesIncluded, setAmenitiesIncluded] = useState("");
   const [inFloodZone, setInFloodZone] = useState(null);
+  const [imageUrl, setImageUrl] =  useState('');
   const [message, setMessage] = useState(undefined);
+  const router = useRouter(); 
+
 
   const handleName = (e) => setName(e.target.value);
   const handleDescription = (e) => setDescription(e.target.value);
@@ -41,9 +39,8 @@ const [address, setAddress] = useState("");
 
   const handleSubmitProperty = (event) => {
     event.preventDefault();
-    const requestBody = { name, description, address, propertyType, squareFootage, numBaths, numBeds, price, hasHOA, amenitiesIncluded, inFloodZone };
-    console.log('here is the req: ', requestBody);
-    // console.log('Here is the api endpoint: ', API_URL);
+    const requestBody = { name, description, address, propertyType, squareFootage, numBaths, numBeds, price, hasHOA, amenitiesIncluded, inFloodZone,  imageUrl};
+    // console.log('here is the req: ', requestBody);
 
     axios
       .post(`${API_URL}/api/addProperty`, requestBody, {
@@ -52,119 +49,161 @@ const [address, setAddress] = useState("");
         },
       })
       .then((response) => {
-        if (response.status === 200 && response.data.property) {
-            console.log(response.data);    
-            redirect('/')
-  
+        console.log(response);
+        if (response.status === 201) {
+            // console.log(response.data);    
+            // redirect('/')
+            router.push('/');  
         }
         })
-      .catch((err) => setMessage(err.response.data.message));
+       .catch((err) => setMessage(err.response.data.message));
+
   };
 
   return (
     <Box>
-      <Text fontSize="2xl" fontWeight="bold">Add a Property</Text>
-      <Box>
+      <Text fontSize="2xl" p="4" fontWeight="bold">Add a Property</Text>
+      <Box p="4">
           <form onSubmit={handleSubmitProperty}>
      
-              <Text marginTop="2"><label>Name</label></Text>
-              <input
+  
+
+<Flex justifyContent="center">
+<Text fontSize="x-large" fontWeight="bold">The Basics</Text>
+
+</Flex>
+              <Input
+              placeholder="Name"
                 type="text"
                 name="name"
                 value={name}
+                required
                 onChange={handleName}
               />
 
+                        <Input
+              placeholder="Address"               
+               type="text"
+                name="address"
+                value={address}
+                required
+                onChange={handleAddress}
+              />
 
-<Text marginTop="2"><label>Description</label></Text>
-              <textarea
+              <Textarea
+              placeholder="Description"
                 type="text"
                 name="description"
                 value={description}
                 onChange={handleDescription}
                 rows="4"
                 cols="33"
-              ></textarea>
+              ></Textarea>
+
+<Select placeholder="Property Type" name="propertyType" value={propertyType} required onChange={handlePropertyType}>
+  <option value="Rental">Rental</option>
+  <option value="For Sale">For Sale</option>
+</Select>
 
 
+<Divider p="2" />
 
-              <Text marginTop="2"><label>Address</label></Text>
-              <input
-                type="text"
-                name="address"
-                value={address}
-                onChange={handleAddress}
+<Flex justifyContent="center">
+<Text fontSize="x-large" fontWeight="bold">The Visuals</Text>
+</Flex>
+        <Flex justifyContent="center">
+<Button>
+<CldUploadButton  uploadPreset="nextApp" onSuccess={(result) => {
+    setImageUrl(result.info.secure_url); 
+}}>  
+        Upload an Image
+</CldUploadButton>
+</Button>
+
+</Flex>
+
+<Divider p="2" />
+
+<Flex justifyContent="center">
+<Text fontSize="x-large" fontWeight="bold">The Numbers</Text>
+
+</Flex>
+
+<Input
+              placeholder="Price"
+                type="number"
+                name="price"
+                value={price}
+                required
+                onChange={handlePrice}
               />
 
-
-            {/* change this to radio button */}
-<Text marginTop="2"><label>Property Type -- CHANGE TO RADIO BUTTON</label></Text>
-              <input
-                type="text"
-                name="propertyType"
-                value={propertyType}
-                onChange={handlePropertyType}
-              />
-<Flex>
-<Text marginTop="2"><label>Square Footage</label></Text>
-              <input
+<Flex justifyContent="center">
+              <Input
+              placeholder="Square Footage"
                 type="number"
                 name="squareFootage"
                 value={squareFootage}
+                required
                 onChange={handleSquareFootage}
               />
 
-<Text marginTop="2"><label>Number of Baths</label></Text>
-              <input
+
+
+
+               <Input
+              placeholder="Number of Baths"
                 type="number"
                 name="numBaths"
                 value={numBaths}
+                required
                 onChange={handleNumBaths}
               />
 
-<Text marginTop="2"><label>Number of Beds</label></Text>
-              <input
+              <Input
+              placeholder="Number of Beds"
                 type="number"
                 name="numBeds"
                 value={numBeds}
+                required
                 onChange={handleNumBeds}
               />
 </Flex>
 
-<Text marginTop="2"><label>Price</label></Text>
-              <input
-                type="number"
-                name="price"
-                value={price}
-                onChange={handlePrice}
-              />
+<Divider p="2" />
+
+<Flex justifyContent="center">
+<Text fontSize="x-large" fontWeight="bold">More Details</Text>
+
+</Flex>
+
+<Flex justifyContent="center">
+<Select 
+placeholder='Has HOA?'
+name="hasHOA" value={hasHOA} onChange={handleHoa}>
+  <option value="true">True</option>
+  <option value="false">False</option>
+</Select>
               
-
-              <Text marginTop="2"><label>Has HOA? --CHANGE TO BOOLEAN RADIO BUTTONS</label></Text>
-              <input
-                type="text"
-                name="hasHOA"
-                value={hasHOA}
-                onChange={handleHoa}
-              />
+<Select
+placeholder="In Flood Zone?" name="inFloodZone" value={inFloodZone} onChange={handleInFloodZone}>
+  <option value="true">True</option>
+  <option value="false">False</option>
+</Select>
+</Flex>
 
 
-<Text marginTop="2"><label>Amenities Included</label></Text>
-              <input
+<Input
+              placeholder="Amenities Included"
                 type="text"
                 name="amenities"
                 value={amenitiesIncluded}
                 onChange={handleAmenities}
               />
 
-              
-<Text marginTop="2"><label>In Flood Zone? --CHANGE TO BOOLEAN RADIO BUTTONS</label></Text>
-              <input
-                type="text"
-                name="floodZone"
-                value={inFloodZone}
-                onChange={handleInFloodZone}
-              />
+
+
+
 
 
             
@@ -174,9 +213,9 @@ const [address, setAddress] = useState("");
               </div>
             )}
 
-            <div>
-              <button type="submit">Submit</button>
-            </div>
+            <Flex justifyContent="center" p="4">
+              <Button type="submit">Submit</Button>
+            </Flex>
           </form>
       </Box>
     </Box>
