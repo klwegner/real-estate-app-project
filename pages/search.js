@@ -1,16 +1,13 @@
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
-import { Flex, Box, Text, Icon, Button, ButtonGroup } from '@chakra-ui/react';
-import { BsFilter } from 'react-icons/bs';
-import SearchFilters from '@/components/SearchFilters';
+import { Flex, Box, Text, Button, ButtonGroup } from '@chakra-ui/react';
+// import SearchFilters from '@/components/SearchFilters';
 import Property from '@/components/Property';
 import NoResult from '../public/noResult.jpg';
 import axios from "axios";
 
-
 const API_URL = 'http://localhost:5005';
-
 
 const Search = ({ properties }) => {
   const router = useRouter();
@@ -27,9 +24,9 @@ const Search = ({ properties }) => {
     router.push(`/search?propertyType=${type}`); // Update URL with selected type
   };
 
-  // Use useMemo to memoize filtered properties based on filters and properties
   const filteredProperties = useMemo(() => {
-    const typeToFilter = selectedPropertyType || propertyType; // Consider both sources
+    //below allows buttons to work and URL params to search
+    const typeToFilter = selectedPropertyType || propertyType; 
 
     if (!typeToFilter) {
       return properties; // Return all properties if no filter
@@ -96,7 +93,6 @@ const Search = ({ properties }) => {
       </ButtonGroup>
       </Flex>
 
-
       {filteredProperties.length > 0 && ( 
         <Flex justifyContent="center" flexWrap="wrap">
           {filteredProperties.map((property) => (
@@ -126,8 +122,8 @@ const Search = ({ properties }) => {
 export default Search;
 
   export async function getServerSideProps() {
-    const url = new URL(`${API_URL}/api/properties`, 'http://localhost:5005');
-    const data = await axios.get(url.toString());
+    // const url = new URL(`${API_URL}/api/properties`, 'http://localhost:5005');
+    const data = await axios.get(`${API_URL}/api/properties`);
     const properties = data?.data || [];
     // console.log('properties on search page', properties)
   

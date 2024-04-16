@@ -1,17 +1,26 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import axios from "axios";
-import { Flex, Box, Text, Input, Textarea, Select, Button, Divider  } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
-import { CldUploadButton   } from 'next-cloudinary';
+import {
+  Flex,
+  Box,
+  Text,
+  Input,
+  Textarea,
+  Select,
+  Button,
+  Divider,
+} from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { CldUploadButton } from "next-cloudinary";
 
-const API_URL = 'http://localhost:5005';
+const API_URL = process.env.REACT_APP_API_URL;
 
-function AddPropertyPage(props) {
+function AddPropertyPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-const [address, setAddress] = useState("");
+  const [address, setAddress] = useState("");
   const [propertyType, setPropertyType] = useState("");
   const [squareFootage, setSquareFootage] = useState(null);
   const [numBaths, setNumBaths] = useState(null);
@@ -20,10 +29,9 @@ const [address, setAddress] = useState("");
   const [hasHOA, setHasHOA] = useState(null);
   const [amenitiesIncluded, setAmenitiesIncluded] = useState("");
   const [inFloodZone, setInFloodZone] = useState(null);
-  const [imageUrl, setImageUrl] =  useState('');
+  const [imageUrl, setImageUrl] = useState("");
   const [message, setMessage] = useState(undefined);
-  const router = useRouter(); 
-
+  const router = useRouter();
 
   const handleName = (e) => setName(e.target.value);
   const handleDescription = (e) => setDescription(e.target.value);
@@ -39,7 +47,20 @@ const [address, setAddress] = useState("");
 
   const handleSubmitProperty = (event) => {
     event.preventDefault();
-    const requestBody = { name, description, address, propertyType, squareFootage, numBaths, numBeds, price, hasHOA, amenitiesIncluded, inFloodZone,  imageUrl};
+    const requestBody = {
+      name,
+      description,
+      address,
+      propertyType,
+      squareFootage,
+      numBaths,
+      numBeds,
+      price,
+      hasHOA,
+      amenitiesIncluded,
+      inFloodZone,
+      imageUrl,
+    };
     // console.log('here is the req: ', requestBody);
 
     axios
@@ -51,172 +72,178 @@ const [address, setAddress] = useState("");
       .then((response) => {
         console.log(response);
         if (response.status === 201) {
-            // console.log(response.data);    
-            // redirect('/')
-            router.push('/');  
+          // console.log(response.data);
+          router.push("/");
         }
-        })
-       .catch((err) => setMessage(err.response.data.message));
-
+      })
+      .catch((err) => setMessage(err.response.data.message));
   };
 
   return (
     <Box>
-      <Text fontSize="2xl" p="4" fontWeight="bold">Add a Property</Text>
+      <Text fontSize="2xl" p="4" fontWeight="bold">
+        Add a Property
+      </Text>
       <Box p="4">
-          <form onSubmit={handleSubmitProperty}>
-     
-  
+        <form onSubmit={handleSubmitProperty}>
+          <Flex justifyContent="center">
+            <Text fontSize="x-large" fontWeight="bold">
+              The Basics
+            </Text>
+          </Flex>
+          <Input
+            placeholder="Name"
+            type="text"
+            name="name"
+            value={name}
+            required
+            onChange={handleName}
+          />
 
-<Flex justifyContent="center">
-<Text fontSize="x-large" fontWeight="bold">The Basics</Text>
+          <Input
+            placeholder="Address"
+            type="text"
+            name="address"
+            value={address}
+            required
+            onChange={handleAddress}
+          />
 
-</Flex>
-              <Input
-              placeholder="Name"
-                type="text"
-                name="name"
-                value={name}
-                required
-                onChange={handleName}
-              />
+          <Textarea
+            placeholder="Description"
+            type="text"
+            name="description"
+            value={description}
+            onChange={handleDescription}
+            rows="4"
+            cols="33"
+          ></Textarea>
 
-                        <Input
-              placeholder="Address"               
-               type="text"
-                name="address"
-                value={address}
-                required
-                onChange={handleAddress}
-              />
+          <Select
+            placeholder="Property Type"
+            name="propertyType"
+            value={propertyType}
+            required
+            onChange={handlePropertyType}
+          >
+            <option value="Rental">Rental</option>
+            <option value="For Sale">For Sale</option>
+          </Select>
 
-              <Textarea
-              placeholder="Description"
-                type="text"
-                name="description"
-                value={description}
-                onChange={handleDescription}
-                rows="4"
-                cols="33"
-              ></Textarea>
+          <Divider p="2" />
 
-<Select placeholder="Property Type" name="propertyType" value={propertyType} required onChange={handlePropertyType}>
-  <option value="Rental">Rental</option>
-  <option value="For Sale">For Sale</option>
-</Select>
+          <Flex justifyContent="center">
+            <Text fontSize="x-large" fontWeight="bold">
+              The Visuals
+            </Text>
+          </Flex>
+          <Flex justifyContent="center">
+            <Button>
+              <CldUploadButton
+                uploadPreset="nextApp"
+                onSuccess={(result) => {
+                  setImageUrl(result.info.secure_url);
+                }}
+              >
+                Upload an Image
+              </CldUploadButton>
+            </Button>
+          </Flex>
 
+          <Divider p="2" />
 
-<Divider p="2" />
+          <Flex justifyContent="center">
+            <Text fontSize="x-large" fontWeight="bold">
+              The Numbers
+            </Text>
+          </Flex>
 
-<Flex justifyContent="center">
-<Text fontSize="x-large" fontWeight="bold">The Visuals</Text>
-</Flex>
-        <Flex justifyContent="center">
-<Button>
-<CldUploadButton  uploadPreset="nextApp" onSuccess={(result) => {
-    setImageUrl(result.info.secure_url); 
-}}>  
-        Upload an Image
-</CldUploadButton>
-</Button>
+          <Input
+            placeholder="Price"
+            type="number"
+            name="price"
+            value={price}
+            required
+            onChange={handlePrice}
+          />
 
-</Flex>
-
-<Divider p="2" />
-
-<Flex justifyContent="center">
-<Text fontSize="x-large" fontWeight="bold">The Numbers</Text>
-
-</Flex>
-
-<Input
-              placeholder="Price"
-                type="number"
-                name="price"
-                value={price}
-                required
-                onChange={handlePrice}
-              />
-
-<Flex justifyContent="center">
-              <Input
+          <Flex justifyContent="center">
+            <Input
               placeholder="Square Footage"
-                type="number"
-                name="squareFootage"
-                value={squareFootage}
-                required
-                onChange={handleSquareFootage}
-              />
+              type="number"
+              name="squareFootage"
+              value={squareFootage}
+              required
+              onChange={handleSquareFootage}
+            />
 
-
-
-
-               <Input
+            <Input
               placeholder="Number of Baths"
-                type="number"
-                name="numBaths"
-                value={numBaths}
-                required
-                onChange={handleNumBaths}
-              />
+              type="number"
+              name="numBaths"
+              value={numBaths}
+              required
+              onChange={handleNumBaths}
+            />
 
-              <Input
+            <Input
               placeholder="Number of Beds"
-                type="number"
-                name="numBeds"
-                value={numBeds}
-                required
-                onChange={handleNumBeds}
-              />
-</Flex>
+              type="number"
+              name="numBeds"
+              value={numBeds}
+              required
+              onChange={handleNumBeds}
+            />
+          </Flex>
 
-<Divider p="2" />
+          <Divider p="2" />
 
-<Flex justifyContent="center">
-<Text fontSize="x-large" fontWeight="bold">More Details</Text>
+          <Flex justifyContent="center">
+            <Text fontSize="x-large" fontWeight="bold">
+              More Details
+            </Text>
+          </Flex>
 
-</Flex>
+          <Flex justifyContent="center">
+            <Select
+              placeholder="Has HOA?"
+              name="hasHOA"
+              value={hasHOA}
+              onChange={handleHoa}
+            >
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </Select>
 
-<Flex justifyContent="center">
-<Select 
-placeholder='Has HOA?'
-name="hasHOA" value={hasHOA} onChange={handleHoa}>
-  <option value="true">True</option>
-  <option value="false">False</option>
-</Select>
-              
-<Select
-placeholder="In Flood Zone?" name="inFloodZone" value={inFloodZone} onChange={handleInFloodZone}>
-  <option value="true">True</option>
-  <option value="false">False</option>
-</Select>
-</Flex>
+            <Select
+              placeholder="In Flood Zone?"
+              name="inFloodZone"
+              value={inFloodZone}
+              onChange={handleInFloodZone}
+            >
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </Select>
+          </Flex>
 
+          <Input
+            placeholder="Amenities Included"
+            type="text"
+            name="amenities"
+            value={amenitiesIncluded}
+            onChange={handleAmenities}
+          />
 
-<Input
-              placeholder="Amenities Included"
-                type="text"
-                name="amenities"
-                value={amenitiesIncluded}
-                onChange={handleAmenities}
-              />
+          {message && (
+            <Box>
+              <p>{message}</p>
+            </Box>
+          )}
 
-
-
-
-
-
-            
-            {message && (
-              <div>
-                <p>{message}</p>
-              </div>
-            )}
-
-            <Flex justifyContent="center" p="4">
-              <Button type="submit">Submit</Button>
-            </Flex>
-          </form>
+          <Flex justifyContent="center" p="4">
+            <Button type="submit">Submit</Button>
+          </Flex>
+        </form>
       </Box>
     </Box>
   );

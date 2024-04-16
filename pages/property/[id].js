@@ -1,15 +1,15 @@
-import { useRouter } from 'next/router';
-import axios from 'axios';
-import Property from '@/components/Property';
-import { Flex } from '@chakra-ui/react';
+import { useRouter } from "next/router";
+import axios from "axios";
+import Property from "@/components/Property";
+import { Flex } from "@chakra-ui/react";
 
-
-const API_URL = 'http://localhost:5005'; // Replace with your API URL
+const API_URL = process.env.REACT_APP_API_URL;
 
 export async function getServerSideProps(context) {
-  const { params: { id } } = context;
-  console.log('the id ', id);
-
+  const {
+    params: { id },
+  } = context;
+  console.log("the id ", id);
 
   if (!id) {
     return {
@@ -19,19 +19,21 @@ export async function getServerSideProps(context) {
       },
     };
   }
-  const response = await axios.get(`${API_URL}/api/properties/${id}`);
-  console.log(response)
 
+  const response = await axios.get(`${API_URL}/api/properties/${id}`);
+  console.log(response);
+
+  //if 404 code
   if (!response.data) {
-    console.log('no data returned')
+    console.log("no data returned");
     return {
-      notFound: true, // Handle 404 status code
+      notFound: true,
     };
   }
 
   return {
     props: {
-      property: response.data, // Rename the prop to "property" for clarity
+      property: response.data,
     },
   };
 }
@@ -48,6 +50,8 @@ export default function PropertyDetailsPage({ property, error, errorMessage }) {
   }
 
   return (
-  <Flex justifyContent="center"><Property property={property} /></Flex>
-  ); // Pass "property" prop
+    <Flex justifyContent="center">
+      <Property property={property} />
+    </Flex>
+  );
 }
