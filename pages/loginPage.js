@@ -11,7 +11,7 @@ import {
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = 'http://localhost:5005';
 
 export default function LoginPage() {
   const router = useRouter();

@@ -3,7 +3,7 @@ import axios from "axios";
 import Property from "@/components/Property";
 import { Flex } from "@chakra-ui/react";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = 'http://localhost:5005';
 
 export async function getServerSideProps(context) {
   const {

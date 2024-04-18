@@ -20,7 +20,7 @@ import { GiMoneyStack } from "react-icons/gi";
 const Navbar = () => (
   <Flex p="2" borderBottom="1" borderColor="gray.100">
     <Box fontSize="3xl" color="blue.400" fontWeight="bold">
-      <Link href="/">UAE Premier Real Estate</Link>
+      <Link href="/">Tampa Bay Properties</Link>
     </Box>
     <Spacer />
 

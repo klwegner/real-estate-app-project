@@ -15,7 +15,7 @@ import {
 import { useRouter } from "next/router";
 import { CldUploadButton } from "next-cloudinary";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = 'http://localhost:5005';
 
 function AddPropertyPage() {
   const [name, setName] = useState("");
@@ -76,7 +76,9 @@ function AddPropertyPage() {
           router.push("/");
         }
       })
-      .catch((err) => setMessage(err.response.data.message));
+      .catch((err) => setMessage(err.toString()));
+      // .catch((err) => console.error(err.toString()));
+
   };
 
   return (
@@ -84,6 +86,7 @@ function AddPropertyPage() {
       <Text fontSize="2xl" p="4" fontWeight="bold">
         Add a Property
       </Text>
+
       <Box p="4">
         <form onSubmit={handleSubmitProperty}>
           <Flex justifyContent="center">
@@ -234,9 +237,10 @@ function AddPropertyPage() {
             onChange={handleAmenities}
           />
 
-          {message && (
-            <Box>
-              <p>{message}</p>
+{message && (
+            <Box backgroundColor="red">
+            <Text fontWeight="bold" textAlign="center">{message}. Are you logged in?</Text>
+
             </Box>
           )}
 

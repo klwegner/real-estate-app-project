@@ -13,7 +13,7 @@ const Home = () => {
 
   useEffect(() => {
     const fetchRentalProperties = async () => {
-      const API_URL = process.env.REACT_APP_API_URL;
+      const API_URL = 'http://localhost:5005';
       try {
         const response = await axios.get(`${API_URL}/api/properties/rentals`, {
           headers: {
@@ -31,7 +31,7 @@ const Home = () => {
     };
 
     const fetchForSaleProperties = async () => {
-      const API_URL = process.env.REACT_APP_API_URL;
+      const API_URL = 'http://localhost:5005';
       try {
         const response = await axios.get(`${API_URL}/api/properties/forSale`, {
           headers: {
