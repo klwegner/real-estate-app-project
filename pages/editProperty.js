@@ -17,21 +17,24 @@ import { CldUploadButton } from "next-cloudinary";
 
 const API_URL = 'http://localhost:5005';
 
-function AddPropertyPage() {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [address, setAddress] = useState("");
-  const [propertyType, setPropertyType] = useState("");
-  const [squareFootage, setSquareFootage] = useState(null);
-  const [numBaths, setNumBaths] = useState(null);
-  const [numBeds, setNumBeds] = useState(null);
-  const [price, setPrice] = useState(null);
-  const [hasHOA, setHasHOA] = useState(null);
-  const [amenitiesIncluded, setAmenitiesIncluded] = useState("");
-  const [inFloodZone, setInFloodZone] = useState(null);
-  const [imageUrl, setImageUrl] = useState("");
-  const [message, setMessage] = useState(undefined);
-  const router = useRouter();
+function EditPropertyPage() {
+
+    const router = useRouter();
+    const { id, nm, ds, ad, pt, sf, baths, beds, pr, hoa, fl, am, img } = router.query;
+    
+  const [name, setName] = useState(nm);
+  const [description, setDescription] = useState(ds);
+  const [address, setAddress] = useState(ad);
+  const [propertyType, setPropertyType] = useState(pt);
+  const [squareFootage, setSquareFootage] = useState(sf);
+  const [numBaths, setNumBaths] = useState(baths);
+  const [numBeds, setNumBeds] = useState(beds);
+  const [price, setPrice] = useState(pr);
+  const [hasHOA, setHasHOA] = useState(hoa);
+  const [amenitiesIncluded, setAmenitiesIncluded] = useState(am);
+  const [inFloodZone, setInFloodZone] = useState(fl);
+  const [imageUrl, setImageUrl] = useState(img);
+  const [message, setMessage] = useState("");
 
   const handleName = (e) => setName(e.target.value);
   const handleDescription = (e) => setDescription(e.target.value);
@@ -63,17 +66,19 @@ function AddPropertyPage() {
     };
     // console.log('here is the req: ', requestBody);
 
-    axios
-      .post(`${API_URL}/api/addProperty`, requestBody, {
+    axios.
+    put(`${API_URL}/api/properties/${id}`, requestBody, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
       })
       .then((response) => {
         console.log(response);
-        if (response.status === 201) {
-          // console.log(response.data);
-          router.push("/");
+        if (response.status === 200) {
+        //   console.log(response.data);
+          const { id } = router.query; 
+
+          router.push(`/property/${id}`);
         }
       })
       .catch((err) => setMessage(err.toString()));
@@ -95,7 +100,7 @@ function AddPropertyPage() {
             </Text>
           </Flex>
           <Input
-            placeholder="Name"
+            placeholder={name}
             type="text"
             name="name"
             value={name}
@@ -104,7 +109,7 @@ function AddPropertyPage() {
           />
 
           <Input
-            placeholder="Address"
+            placeholder={ad}
             type="text"
             name="address"
             value={address}
@@ -113,7 +118,7 @@ function AddPropertyPage() {
           />
 
           <Textarea
-            placeholder="Description"
+            placeholder={ds}
             type="text"
             name="description"
             value={description}
@@ -123,7 +128,7 @@ function AddPropertyPage() {
           ></Textarea>
 
           <Select
-            placeholder="Property Type"
+            placeholder={pt}
             name="propertyType"
             value={propertyType}
             required
@@ -162,7 +167,7 @@ function AddPropertyPage() {
           </Flex>
 
           <Input
-            placeholder="Price"
+            placeholder={pr}
             type="number"
             name="price"
             value={price}
@@ -172,7 +177,7 @@ function AddPropertyPage() {
 
           <Flex justifyContent="center">
             <Input
-              placeholder="Square Footage"
+              placeholder={sf}
               type="number"
               name="squareFootage"
               value={squareFootage}
@@ -181,7 +186,7 @@ function AddPropertyPage() {
             />
 
             <Input
-              placeholder="Number of Baths"
+              placeholder={baths}
               type="number"
               name="numBaths"
               value={numBaths}
@@ -190,7 +195,7 @@ function AddPropertyPage() {
             />
 
             <Input
-              placeholder="Number of Beds"
+              placeholder={beds}
               type="number"
               name="numBeds"
               value={numBeds}
@@ -209,7 +214,7 @@ function AddPropertyPage() {
 
           <Flex justifyContent="center">
             <Select
-              placeholder="Has HOA?"
+              placeholder={hoa}
               name="hasHOA"
               value={hasHOA}
               onChange={handleHoa}
@@ -219,7 +224,7 @@ function AddPropertyPage() {
             </Select>
 
             <Select
-              placeholder="In Flood Zone?"
+              placeholder={fl}
               name="inFloodZone"
               value={inFloodZone}
               onChange={handleInFloodZone}
@@ -230,7 +235,7 @@ function AddPropertyPage() {
           </Flex>
 
           <Input
-            placeholder="Amenities Included"
+            placeholder={am}
             type="text"
             name="amenities"
             value={amenitiesIncluded}
@@ -255,4 +260,4 @@ logged in?</Link>
   );
 }
 
-export default AddPropertyPage;
+export default EditPropertyPage;
