@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import { useState } from "react";
 import axios from "axios";
 import {
@@ -239,7 +239,9 @@ function AddPropertyPage() {
 
 {message && (
             <Box backgroundColor="red">
-            <Text fontWeight="bold" textAlign="center">{message}. Are you logged in?</Text>
+            <Text fontWeight="bold" textAlign="center">{message}. Are you <Link href="/loginPage" passHref>
+logged in?</Link>
+</Text>
 
             </Box>
           )}
