@@ -11,14 +11,21 @@ import {
   Select,
   Button,
   Divider,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Slide,
+  useDisclosure 
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { CldUploadButton } from "next-cloudinary";
 
-const API_URL = 'http://localhost:5005';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 function EditPropertyPage() {
 
+    const { isOpen, onToggle } = useDisclosure()
     const router = useRouter();
     const { id, nm, ds, ad, pt, sf, baths, beds, pr, hoa, fl, am, img } = router.query;
     
@@ -81,7 +88,12 @@ function EditPropertyPage() {
           router.push(`/property/${id}`);
         }
       })
-      .catch((err) => setMessage(err.toString()));
+      .catch((err) => 
+      {
+        setMessage(err.toString())
+        onToggle()
+
+    });
       // .catch((err) => console.error(err.toString()));
 
   };
@@ -243,13 +255,26 @@ function EditPropertyPage() {
           />
 
 {message && (
-            <Box backgroundColor="red">
-            <Text textAlign="center">{message}. Are you <Link fontWeight="bold" href="/loginPage" passHref>
-logged in?</Link>
-</Text>
+  <Slide direction='bottom' in={isOpen} style={{ zIndex: 10 }}>
+  <Alert
+  status='error'
+  variant='subtle'
+  flexDirection='column'
+  alignItems='center'
+  justifyContent='center'
+  textAlign='center'
+  height='200px'
+>
+  <AlertIcon boxSize='40px' mr={0} />
+  <AlertTitle mt={4} mb={1} fontSize='lg'>Error</AlertTitle>
+  <AlertDescription maxWidth='sm'>
+    {message}
+  </AlertDescription>
+</Alert>
 
-            </Box>
-          )}
+</Slide>
+
+      )}
 
           <Flex justifyContent="center" p="4">
             <Button type="submit">Submit</Button>

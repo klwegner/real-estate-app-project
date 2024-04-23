@@ -11,11 +11,23 @@ import {
   Select,
   Button,
   Divider,
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+    NumberIncrementStepper,
+    NumberDecrementStepper,
+    Spacer,
+    Slide,
+    useDisclosure 
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { CldUploadButton } from "next-cloudinary";
 
-const API_URL = 'http://localhost:5005';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 function AddPropertyPage() {
   const [name, setName] = useState("");
@@ -44,6 +56,9 @@ function AddPropertyPage() {
   const handleHoa = (e) => setHasHOA(e.target.value);
   const handleAmenities = (e) => setAmenitiesIncluded(e.target.value);
   const handleInFloodZone = (e) => setInFloodZone(e.target.value);
+
+  const { isOpen, onToggle } = useDisclosure()
+
 
   const handleSubmitProperty = (event) => {
     event.preventDefault();
@@ -76,13 +91,18 @@ function AddPropertyPage() {
           router.push("/");
         }
       })
-      .catch((err) => setMessage(err.toString()));
+      .catch((err) => {
+        
+        setMessage(err.toString())
+        onToggle()
+      }
+      );
       // .catch((err) => console.error(err.toString()));
 
   };
 
   return (
-    <Box>
+    <Box m="2">
       <Text fontSize="2xl" p="4" fontWeight="bold">
         Add a Property
       </Text>
@@ -94,13 +114,15 @@ function AddPropertyPage() {
               The Basics
             </Text>
           </Flex>
+
           <Input
-            placeholder="Name"
+            placeholder="Property Name"
             type="text"
             name="name"
             value={name}
             required
             onChange={handleName}
+            marginBottom="4"
           />
 
           <Input
@@ -110,6 +132,7 @@ function AddPropertyPage() {
             value={address}
             required
             onChange={handleAddress}
+            marginBottom="4"
           />
 
           <Textarea
@@ -120,7 +143,12 @@ function AddPropertyPage() {
             onChange={handleDescription}
             rows="4"
             cols="33"
+            marginBottom="4"
           ></Textarea>
+
+<Flex justifyContent="center">
+
+
 
           <Select
             placeholder="Property Type"
@@ -128,10 +156,13 @@ function AddPropertyPage() {
             value={propertyType}
             required
             onChange={handlePropertyType}
+            w="auto"
           >
             <option value="Rental">Rental</option>
             <option value="For Sale">For Sale</option>
           </Select>
+
+          </Flex>
 
           <Divider p="2" />
 
@@ -145,6 +176,8 @@ function AddPropertyPage() {
               <CldUploadButton
                 uploadPreset="nextApp"
                 onSuccess={(result) => {
+
+                  console.log(result)
                   setImageUrl(result.info.secure_url);
                 }}
               >
@@ -160,17 +193,21 @@ function AddPropertyPage() {
               The Numbers
             </Text>
           </Flex>
+          <Flex justifyContent="space-around">
 
-          <Input
+
+
+<Input
             placeholder="Price"
             type="number"
             name="price"
             value={price}
             required
             onChange={handlePrice}
+            w="auto"
           />
+<Spacer/>
 
-          <Flex justifyContent="center">
             <Input
               placeholder="Square Footage"
               type="number"
@@ -178,17 +215,52 @@ function AddPropertyPage() {
               value={squareFootage}
               required
               onChange={handleSquareFootage}
+              w="auto"
             />
 
-            <Input
+<Spacer/>
+<NumberInput min={1} max={10}>
+  <NumberInputField
+   placeholder="Baths"
+              type="number"
+              name="numBaths"
+              value={numBaths}
+              required
+              onChange={handleNumBaths} />
+  <NumberInputStepper>
+    <NumberIncrementStepper />
+    <NumberDecrementStepper />
+  </NumberInputStepper>
+</NumberInput>
+
+<Spacer/>
+
+            {/* <Input
               placeholder="Number of Baths"
               type="number"
               name="numBaths"
               value={numBaths}
               required
               onChange={handleNumBaths}
-            />
+            /> */}
 
+
+            <NumberInput min={1} max={10}>
+  <NumberInputField
+   placeholder="Beds"
+              type="number"
+              name="numBeds"
+              value={numBeds}
+              required
+              onChange={handleNumBeds} />
+  <NumberInputStepper>
+    <NumberIncrementStepper />
+    <NumberDecrementStepper />
+  </NumberInputStepper>
+</NumberInput>
+
+
+{/* 
             <Input
               placeholder="Number of Beds"
               type="number"
@@ -196,7 +268,8 @@ function AddPropertyPage() {
               value={numBeds}
               required
               onChange={handleNumBeds}
-            />
+            /> */}
+
           </Flex>
 
           <Divider p="2" />
@@ -207,12 +280,13 @@ function AddPropertyPage() {
             </Text>
           </Flex>
 
-          <Flex justifyContent="center">
+          <Flex justifyContent="center" gap="10" marginBottom="4">
             <Select
               placeholder="Has HOA?"
               name="hasHOA"
               value={hasHOA}
               onChange={handleHoa}
+              w="auto"
             >
               <option value="true">True</option>
               <option value="false">False</option>
@@ -223,6 +297,7 @@ function AddPropertyPage() {
               name="inFloodZone"
               value={inFloodZone}
               onChange={handleInFloodZone}
+              w="auto"
             >
               <option value="true">True</option>
               <option value="false">False</option>
@@ -237,14 +312,39 @@ function AddPropertyPage() {
             onChange={handleAmenities}
           />
 
+
 {message && (
-            <Box backgroundColor="red">
+  <Slide direction='bottom' in={isOpen} style={{ zIndex: 10 }}>
+  <Alert
+  status='error'
+  variant='subtle'
+  flexDirection='column'
+  alignItems='center'
+  justifyContent='center'
+  textAlign='center'
+  height='200px'
+>
+  <AlertIcon boxSize='40px' mr={0} />
+  <AlertTitle mt={4} mb={1} fontSize='lg'>Error</AlertTitle>
+  <AlertDescription maxWidth='sm'>
+    {message}
+  </AlertDescription>
+</Alert>
+
+</Slide>
+
+      )}
+{/* 
+{message && (
+            {/* <Box backgroundColor="red">
             <Text textAlign="center">{message}. Are you <Link fontWeight="bold" href="/loginPage" passHref>
 logged in?</Link>
 </Text>
 
             </Box>
-          )}
+
+            
+          )} */}
 
           <Flex justifyContent="center" p="4">
             <Button type="submit">Submit</Button>

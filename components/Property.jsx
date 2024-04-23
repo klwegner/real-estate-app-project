@@ -58,7 +58,6 @@ const Property = ({
                 ${millify(price)}
               </Text>
             </Flex>
-            <Box></Box>
           </Flex>
 
           <Flex
@@ -79,9 +78,10 @@ const Property = ({
           </Text>
 
           <Text fontSize="md">
-            {description.length > 120
+            {/* {description.length > 120
               ? `${description.substring(0, 120)}...`
-              : description}
+              : description} */}
+              {description}
           </Text>
 
           <Text fontSize="sm">

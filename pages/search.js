@@ -1,99 +1,271 @@
-import { useState, useMemo } from 'react';
-import { useRouter } from 'next/router';
-import Image from 'next/image';
-import { Flex, Box, Text, Button, ButtonGroup } from '@chakra-ui/react';
-// import SearchFilters from '@/components/SearchFilters';
-import Property from '@/components/Property';
-import NoResult from '../public/noResult.jpg';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import {
+  Icon,
+  Box,
+  Text,
+  Button,
+  Flex,
+  Select,
+  Spacer,
+  Heading,
+  Stack
+} from "@chakra-ui/react";
+import Property from "@/components/Property";
 import axios from "axios";
+import { BsFilter } from "react-icons/bs";
+import { filterData, getFilterValues } from "../utils/filterData";
 
-const API_URL = 'http://localhost:5005';
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const Search = ({ properties }) => {
   const router = useRouter();
-  const { propertyType } = router.query; // Access propertyType from URL
+  const { propertyType } = router.query;
+  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [filteredProperties, setFilteredProperties] = useState(properties);
+  const [filters, setFilters] = useState(filterData);
+  const [showFilters, setShowFilters] = useState(false); 
 
-  const [selectedPropertyType, setSelectedPropertyType] = useState(propertyType || ''); // Initial state based on URL
+  const handleFilterChange = (event) => {
+    const target = event.target;
+    const name = target.name;
+    const value = target.value;
 
-  const handleFilterChange = (filterValues) => {
-    setSelectedPropertyType(filterValues.propertyType || 'Rental'); // Update state based on filter
-  };
+    const parsedValue =
+      typeof filterData.find((filter) => filter.queryName === name)?.type ===
+      "number"
+        ? parseInt(value) // Convert string to number for numerical filters
+        : value; // Keep string or boolean as-is
 
-  const handleTypeChange = (type) => {
-    setSelectedPropertyType(type);
-    router.push(`/search?propertyType=${type}`); // Update URL with selected type
-  };
+    setSelectedFilters((prevSelectedFilters) => {
+      console.log("prev filters ", prevSelectedFilters);
+      if (value === "all") {
+        const updatedSelectedFilters = prevSelectedFilters.filter(
+          (filter) => filter.name !== name
+        );
+        return updatedSelectedFilters;
+      } else {
+        // Check if prevSelectedFilters is empty
+        if (prevSelectedFilters.length === 0) {
+          console.log({ name, value });
+          return [{ name, value: parsedValue }];
+        } else {
 
-  const filteredProperties = useMemo(() => {
-    //below allows buttons to work and URL params to search
-    const typeToFilter = selectedPropertyType || propertyType; 
 
-    if (!typeToFilter) {
-      return properties; // Return all properties if no filter
+          const updatedSelectedFilters = prevSelectedFilters.map((filter) => {
+            if (filter.name === name) {
+              // Update the value if the filter name matches
+              return { ...filter, value: parsedValue };
+            }
+            return filter;
+          });
+          // If the filter name doesn't exist, add it to the selectedFilters
+          if (!updatedSelectedFilters.some((filter) => filter.name === name)) {
+            return [...updatedSelectedFilters, { name, value: parsedValue }];
+          }
+          return updatedSelectedFilters;
+
+
+          // const filterIndex = prevSelectedFilters.findIndex((filter) => {
+          //   return filter.queryName === name;
+          // });
+
+          // if (filterIndex !== -1) {
+          //   // If the filter is already selected, remove it from the selectedFilters
+          //   const updatedSelectedFilters = [...prevSelectedFilters];
+          //   updatedSelectedFilters[filterIndex].value = parsedValue;
+          //   console.log("updated selected filters ", updatedSelectedFilters);
+          //   return updatedSelectedFilters;
+          // } else {
+          //   // If the filter is not selected, add it to the selectedFilters
+          //   console.log("selected filters ", selectedFilters);
+          //   return [...prevSelectedFilters, { name, value: parsedValue }];
+          // }
+        }
+      }
+    });
+
+    console.log('selected filters to be used ', selectedFilters);
+  }
+
+
+
+
+
+
+
+
+
+
+  useEffect(() => {
+    console.log(router.query)
+    
+    const initialSelectedFilters = [];
+    if (propertyType) {
+      const matchingFilter = filterData.find(
+        (filter) => filter.queryName === "propertyType"
+      );
+      if (matchingFilter) {
+        initialSelectedFilters.push({
+          name: matchingFilter.queryName,
+          value: propertyType,
+        });
+      }
     }
-
-    return properties.filter((property) => property.propertyType === typeToFilter);
-  }, [selectedPropertyType, propertyType, properties]);
-
-// const Search = ({ properties }) => {
-
+    setSelectedFilters(initialSelectedFilters);
+  }, [propertyType]); // Empty dependency array ensures this effect runs only once after the initial render
   
-//   const [propertyType, setPropertyType] = useState(''); // Initial state for property type filter
+  useEffect(() => {
+    const filteredProperties = properties.filter((property) => {
+      if (selectedFilters.length === 0) {
+        return true;
+      }
+  
+      let matches = true;
+      for (const filter of selectedFilters) {
+        const propertyName = filter.name;
+        const propertyValue = property[propertyName];
+  
+        const filterValue =
+          typeof filterData.find((filter) => filter.queryName === filter.name)
+            ?.type === "number"
+            ? parseInt(filter.value) 
+            : filter.value; 
+  
+        if (typeof propertyValue === "string") {
+          matches = matches && propertyValue == filterValue;
+        } else if (typeof propertyValue == "boolean") {
+          matches = matches && propertyValue == (filterValue === "true"); 
+        } else {
+          matches = matches && propertyValue == filterValue;
+        }
+      }
+      return matches;
+    });
+  
+    setFilteredProperties(filteredProperties);
+  }, [selectedFilters, properties, router.query]);
 
-//   const handleFilterChange = (filterValues) => {
-//     setPropertyType(filterValues.propertyType || 'Rental'); // Set property type based on filter
-//   };
 
-//   const router = useRouter();
 
-//   const handleTypeChange = (type) => setPropertyType(type);
 
-//   const filteredProperties = useMemo(() => {
-//     if (!propertyType) {
-//       return properties;
-//     }
 
-//     return properties.filter((property) => property.propertyType === propertyType);
-//   }, [propertyType, properties]);
+
+
+
+    // useEffect(() => {
+    //   console.log(router.query)
+      
+    //   const initialSelectedFilters = [];
+    //   if (propertyType) {
+    //     const matchingFilter = filterData.find(
+    //       (filter) => filter.queryName === "propertyType"
+    //     );
+    //     if (matchingFilter) {
+    //       initialSelectedFilters.push({
+    //         name: matchingFilter.queryName,
+    //         value: propertyType,
+    //       });
+    //     }
+    //   }
+    //   setSelectedFilters(initialSelectedFilters);
+
+
+    //   const filteredProperties = properties.filter((property) => {
+    //     if (selectedFilters.length === 0) {
+    //       return true;
+    //     }
+  
+    //     let matches = true;
+    //     for (const filter of selectedFilters) {
+    //       const propertyName = filter.name;
+    //       const propertyValue = property[propertyName];
+  
+    //       const filterValue =
+    //         typeof filterData.find((filter) => filter.queryName === filter.name)
+    //           ?.type === "number"
+    //           ? parseInt(filter.value) 
+    //           : filter.value; 
+  
+    //       if (typeof propertyValue === "string") {
+    //         matches = matches && propertyValue == filterValue;
+    //       } else if (typeof propertyValue == "boolean") {
+    //         matches = matches && propertyValue == (filterValue === "true"); 
+    //       } else {
+    //         matches = matches && propertyValue == filterValue;
+    //       }
+    //     }
+    //     return matches;
+    //   });
+  
+    //   setFilteredProperties(filteredProperties);
+    // }, [selectedFilters, properties, router.query]);
 
   return (
-    <Box>
-      {/* <Flex
+    <Box m="2">
+      <Flex
         cursor="pointer"
         bg="gray.100"
         borderBottom="1"
         borderColor="gray.200"
-        p="2"
+        paddingTop="2"
         fontWeight="black"
         fontSize="lg"
         justifyContent="center"
         alignItems="center"
-        onClick={() => setSearchFilters((prevFilters) => !prevFilters)}
+        onClick={() => setShowFilters(!showFilters)}
       >
         <Text>Search Properties</Text>
-        <Icon paddingLeft="2" w="7" as={BsFilter} />
-      </Flex> */}
-      {/* {SearchFilters && <SearchFilters onFilterChange={handleFilterChange} />} */}
-      <Text fontSize="2xl" p="4" fontWeight="bold">
-        Available Properties
-      </Text>
-      <Flex justifyContent="center">
-
-    
-      <ButtonGroup p="4">
-      <Button isActive={propertyType === 'Rental'} onClick={() => handleTypeChange('')}>
-          All
-        </Button>
-        <Button isActive={propertyType === 'Rental'} onClick={() => handleTypeChange('Rental')}>
-          Rental
-        </Button>
-        <Button isActive={propertyType === 'For Sale'} onClick={() => handleTypeChange('For Sale')}>
-          For Sale
-        </Button>
-      </ButtonGroup>
+        <Icon paddingLeft="2" w="7" marginBottom="4" paddingBottom="0"as={BsFilter} />
       </Flex>
 
-      {filteredProperties.length > 0 && ( 
+{/* start filter section */}
+      <Flex flexDirection="column" justifyContent="center">
+        <Flex bg="gray.100" justifyContent="center" flexWrap="wrap">
+          {showFilters &&
+            filters?.map((filter) => (
+              <Box key={filter.queryName}>
+                <Select
+                  placeholder={filter.placeholder}
+                  name={filter.queryName}
+                  onChange={handleFilterChange}
+                  w="fit-content"
+                  p="4"
+                >
+                  {filter?.items?.map((item) => (
+                    <option value={item.value} key={item.value}>
+                      {item.name}
+                    </option>
+                  ))}
+                </Select>
+              </Box>
+            ))}
+        </Flex>
+      </Flex>
+      {/* End filter section */}
+
+      <Flex justifyContent="space-between">
+        <Text fontSize="2xl" p="4" fontWeight="bold">
+          Available Properties
+        </Text>
+        <Spacer />
+        <Button
+          w="auto"
+          marginTop="4"
+          marginRight="4"
+          marginBottom="4"
+          p="4"
+          onClick={() => {
+            setFilteredProperties(properties)
+            setSelectedFilters([])
+
+            router.replace(router.pathname)          }}
+        >
+          Reset Filters
+        </Button>
+      </Flex>
+
+      {filteredProperties.length > 0 && (
         <Flex justifyContent="center" flexWrap="wrap">
           {filteredProperties.map((property) => (
             <Property property={property} key={property.id} />
@@ -102,14 +274,27 @@ const Search = ({ properties }) => {
       )}
 
       {filteredProperties.length === 0 && properties.length > 0 && (
-        <Text fontSize="xl" p="4">
-          No properties match your current filters. Try adjusting your filters.
+        <>
+        <Stack >
+          <Heading textAlign="center">
+          Sorry!
+          </Heading>
+          <Text fontSize="xl" p="4" textAlign="center">
+   No properties match your current filters. Try adjusting your filters.
         </Text>
+        </Stack>
+
+        </>
       )}
 
-      {properties.length === 0 && ( 
-        <Flex justifyContent="center" alignItems="center" flexDirection="column" marginTop="5" marginBottom="5">
-          <Image alt="no result" src={NoResult} width="400" height="260" />
+      {properties.length === 0 && (
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          flexDirection="column"
+          marginTop="5"
+          marginBottom="5"
+        >
           <Text fontSize="2xl" marginTop="3">
             No Results Found
           </Text>
@@ -121,15 +306,13 @@ const Search = ({ properties }) => {
 
 export default Search;
 
-  export async function getServerSideProps() {
-    // const url = new URL(`${API_URL}/api/properties`, 'http://localhost:5005');
-    const data = await axios.get(`${API_URL}/api/properties`);
-    const properties = data?.data || [];
-    // console.log('properties on search page', properties)
-  
-    return {
-      props: {
-        properties,
-      },
-    };
-  }
+export async function getServerSideProps() {
+  const data = await axios.get(`${API_URL}/api/properties`);
+  const properties = data?.data || [];
+
+  return {
+    props: {
+      properties,
+    },
+  };
+}

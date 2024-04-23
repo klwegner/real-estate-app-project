@@ -16,11 +16,14 @@ import { IoIosAdd } from "react-icons/io";
 import { FaDoorOpen, FaHome } from "react-icons/fa";
 import { IoLogOutSharp } from "react-icons/io5";
 import { GiMoneyStack } from "react-icons/gi";
+import { GiHouseKeys } from "react-icons/gi";
+
 
 const Navbar = () => (
   <Flex p="2" borderBottom="1" borderColor="gray.100">
-    <Box fontSize="3xl" color="blue.400" fontWeight="bold">
-      <Link href="/">Tampa Bay Properties</Link>
+    <Box fontSize="4xl" color="blue.400" fontWeight="bold" marginLeft="16">
+      <Link href="/">Unlock Tampa Bay
+ </Link>
     </Box>
     <Spacer />
 

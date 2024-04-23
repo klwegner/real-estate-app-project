@@ -1,16 +1,21 @@
 import axios from "axios";
 import { useState } from "react";
-import { Flex, Box, Text, Input, Button, FormControl } from "@chakra-ui/react";
+import { Flex, Box, Text, Input, Button, FormControl,  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Slide,
+  useDisclosure  } from "@chakra-ui/react";
 import Link from "next/link";
 
-// const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-const API_URL = "http://localhost:5005";
 
 function SignUpPage() {
+  const { isOpen, onToggle } = useDisclosure()
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(undefined);
+  const [message, setMessage] = useState(undefined);
 
   const handleEmail = (e) => setEmail(e.target.value);
   const handlePassword = (e) => setPassword(e.target.value);
@@ -28,7 +33,8 @@ function SignUpPage() {
       .catch((err) => {
         const errorDescription = err.response.data.message;
         console.error(errorDescription);
-        setErrorMessage(errorDescription);
+        setMessage(errorDescription);
+        onToggle()
       });
   };
 
@@ -52,6 +58,8 @@ function SignUpPage() {
             />
           </FormControl>
         </Flex>
+
+        
 
         <Flex justifyContent="center" p="4">
           <Button type="submit">Sign Up</Button>
