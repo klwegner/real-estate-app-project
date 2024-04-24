@@ -25,8 +25,6 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const { isOpen, onToggle } = useDisclosure()
 
-
-
   async function handleSubmit(event) {
     event.preventDefault();
     console.log('hey there')
@@ -74,7 +72,6 @@ export default function LoginPage() {
             />
           </FormControl>
         </Flex>
-
 
         {message && (
   <Slide direction='bottom' in={isOpen} style={{ zIndex: 10 }}>

@@ -148,6 +148,10 @@ const Navbar = () => {
                   Login
                 </Link>
 
+                <Link href="/signUpPage" fontWeight="bold">
+                  Sign Up
+                </Link>
+
                 <Link href="/search" fontWeight="bold">
                   Search
                 </Link>

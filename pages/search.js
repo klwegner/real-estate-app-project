@@ -120,7 +120,7 @@ const Search = ({ properties }) => {
     });
 
     setFilteredProperties(filteredProperties);
-    console.log(filteredProperties);
+    // console.log(filteredProperties);
   }, [selectedFilters, properties, router.query]);
 
   return (
