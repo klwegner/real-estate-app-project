@@ -69,7 +69,7 @@ const Navbar = () => {
               <Spacer />
               <>
                 <Text as="i" fontSize="xl" color="blue.400" fontWeight="bold">
-                  Your Key to Tampa Bay's Hottest Homes, Apartments, Townhomes,
+                  Your Key to Tampa Bay&apos;s Hottest Homes, Apartments, Townhomes,
                   and Condos
                 </Text>
               </>
