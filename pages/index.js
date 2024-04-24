@@ -1,7 +1,4 @@
-// import RentalPic from "../public/rentalpic.png";
-// import BuyPic from "../public/buypic.png";
 import Link from "next/link";
-// import Image from "next/image";
 import {
   Image,
   Flex,
@@ -18,16 +15,15 @@ import {
   SimpleGrid,
   Divider,
 } from "@chakra-ui/react";
-// import Property from "@/components/Property";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useColorMode } from "@chakra-ui/react";
 import { FaBed, FaBath } from "react-icons/fa";
 import { BsGridFill } from "react-icons/bs";
 import millify from "millify";
-// import defaultImage from "../public/defaultImage.jpg";
 
 const Home = () => {
+
   const [propertiesForSale, setPropertiesForSale] = useState([]);
   const [propertiesForRent, setPropertiesForRent] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -74,13 +70,6 @@ const Home = () => {
 
   return (
     <Box backgroundColor="transparent">
-    <Flex justifyContent="flex-end">
-    <Text fontSize='md' as="i" marginRight={16}>Your Key to Tampa Bay's Hottest Homes, Apartments, Townhomes, and Condos</Text>
-
-    </Flex>
-      {/* <Button onClick={toggleColorMode}>
-        {colorMode === "light" ? "Dark Mode" : "Light Mode"}
-      </Button> */}
 
       <Banner
         purpose="RENT A HOME"
@@ -91,11 +80,6 @@ const Home = () => {
         linkName="/search?purpose=for-rent"
         imageUrl="https://s3-us-west-2.amazonaws.com/g5-orion-clients/g5-c-1t2d31r8-berkshire-communities/g5-cl-564oshgsv-berkshire-lauderdale-by-the-sea/uploads/lauderdale-hero-final.jpg"
       />
-      {/* <Flex flexWrap="wrap">
-        {propertiesForRent.map((property) => (
-          <Property property={property} key={property._id} />
-        ))}
-      </Flex> */}
 
       <SimpleGrid
         m="4"
@@ -172,12 +156,7 @@ const Home = () => {
         linkName="/search?purpose=for-sale"
         imageUrl="https://static.55places.com/blog/media/fl-4891d846a429b15c7bf4fea2478e27ee.jpg"
       />
-      {/* <Flex flexWrap="wrap">
-        {propertiesForSale.map((property) => (
-          <Property property={property} key={property._id} />
-        ))}
-      </Flex> */}
-
+    
       <SimpleGrid
         m="4"
         spacing={4}
@@ -243,6 +222,14 @@ const Home = () => {
           </>
         ))}
       </SimpleGrid>
+
+<Flex justifyContent="center">
+<Button onClick={toggleColorMode}>
+        {colorMode === "light" ? "Dark Mode" : "Light Mode"}
+      </Button>
+
+</Flex>
+
     </Box>
   );
 };

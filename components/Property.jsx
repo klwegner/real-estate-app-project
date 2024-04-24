@@ -21,6 +21,7 @@ const Property = ({
     hasHOA,
     amenitiesIncluded,
     inFloodZone,
+    submittingUser
   },
 }) => {
   return (
@@ -98,6 +99,10 @@ const Property = ({
             <Text fontSize="sm">This property is not in an HOA. </Text>
           ) : (
             <Text fontSize="sm">This property is in an HOA.</Text>
+          )}
+
+          {submittingUser && (
+            <Text fontSize="sm">Property uploaded by {submittingUser}</Text>
           )}
         </Box>
       </Flex>

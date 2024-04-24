@@ -9,22 +9,27 @@ import {
   Select,
   Spacer,
   Heading,
-  Stack
+  Stack,
 } from "@chakra-ui/react";
 import Property from "@/components/Property";
 import axios from "axios";
 import { BsFilter } from "react-icons/bs";
-import { filterData, getFilterValues } from "../utils/filterData";
+import { filterData } from "../utils/filterData";
+import { useColorMode, useColorModeValue } from "@chakra-ui/react";
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const Search = ({ properties }) => {
+  const { toggleColorMode } = useColorMode()
   const router = useRouter();
   const { propertyType } = router.query;
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [filteredProperties, setFilteredProperties] = useState(properties);
   const [filters, setFilters] = useState(filterData);
-  const [showFilters, setShowFilters] = useState(false); 
+  const [showFilters, setShowFilters] = useState(false);
+  const color = useColorModeValue('gray.100', 'blue.400');
+
 
   const handleFilterChange = (event) => {
     const target = event.target;
@@ -34,11 +39,11 @@ const Search = ({ properties }) => {
     const parsedValue =
       typeof filterData.find((filter) => filter.queryName === name)?.type ===
       "number"
-        ? parseInt(value) // Convert string to number for numerical filters
-        : value; // Keep string or boolean as-is
+        ? parseInt(value)
+        : value; 
 
     setSelectedFilters((prevSelectedFilters) => {
-      console.log("prev filters ", prevSelectedFilters);
+      // console.log("prev filters ", prevSelectedFilters);
       if (value === "all") {
         const updatedSelectedFilters = prevSelectedFilters.filter(
           (filter) => filter.name !== name
@@ -47,11 +52,9 @@ const Search = ({ properties }) => {
       } else {
         // Check if prevSelectedFilters is empty
         if (prevSelectedFilters.length === 0) {
-          console.log({ name, value });
+          // console.log({ name, value });
           return [{ name, value: parsedValue }];
         } else {
-
-
           const updatedSelectedFilters = prevSelectedFilters.map((filter) => {
             if (filter.name === name) {
               // Update the value if the filter name matches
@@ -64,42 +67,15 @@ const Search = ({ properties }) => {
             return [...updatedSelectedFilters, { name, value: parsedValue }];
           }
           return updatedSelectedFilters;
-
-
-          // const filterIndex = prevSelectedFilters.findIndex((filter) => {
-          //   return filter.queryName === name;
-          // });
-
-          // if (filterIndex !== -1) {
-          //   // If the filter is already selected, remove it from the selectedFilters
-          //   const updatedSelectedFilters = [...prevSelectedFilters];
-          //   updatedSelectedFilters[filterIndex].value = parsedValue;
-          //   console.log("updated selected filters ", updatedSelectedFilters);
-          //   return updatedSelectedFilters;
-          // } else {
-          //   // If the filter is not selected, add it to the selectedFilters
-          //   console.log("selected filters ", selectedFilters);
-          //   return [...prevSelectedFilters, { name, value: parsedValue }];
-          // }
         }
       }
     });
 
-    console.log('selected filters to be used ', selectedFilters);
-  }
-
-
-
-
-
-
-
-
-
+  };
 
   useEffect(() => {
-    console.log(router.query)
-    
+    // console.log(router.query);
+
     const initialSelectedFilters = [];
     if (propertyType) {
       const matchingFilter = filterData.find(
@@ -113,100 +89,46 @@ const Search = ({ properties }) => {
       }
     }
     setSelectedFilters(initialSelectedFilters);
-  }, [propertyType]); // Empty dependency array ensures this effect runs only once after the initial render
-  
+  }, [propertyType]); 
+
   useEffect(() => {
     const filteredProperties = properties.filter((property) => {
       if (selectedFilters.length === 0) {
         return true;
       }
-  
+
       let matches = true;
       for (const filter of selectedFilters) {
         const propertyName = filter.name;
         const propertyValue = property[propertyName];
-  
+
         const filterValue =
           typeof filterData.find((filter) => filter.queryName === filter.name)
             ?.type === "number"
-            ? parseInt(filter.value) 
-            : filter.value; 
-  
+            ? parseInt(filter.value)
+            : filter.value;
+
         if (typeof propertyValue === "string") {
           matches = matches && propertyValue == filterValue;
         } else if (typeof propertyValue == "boolean") {
-          matches = matches && propertyValue == (filterValue === "true"); 
+          matches = matches && propertyValue == (filterValue === "true");
         } else {
           matches = matches && propertyValue == filterValue;
         }
       }
       return matches;
     });
-  
+
     setFilteredProperties(filteredProperties);
+    console.log(filteredProperties);
   }, [selectedFilters, properties, router.query]);
 
-
-
-
-
-
-
-
-    // useEffect(() => {
-    //   console.log(router.query)
-      
-    //   const initialSelectedFilters = [];
-    //   if (propertyType) {
-    //     const matchingFilter = filterData.find(
-    //       (filter) => filter.queryName === "propertyType"
-    //     );
-    //     if (matchingFilter) {
-    //       initialSelectedFilters.push({
-    //         name: matchingFilter.queryName,
-    //         value: propertyType,
-    //       });
-    //     }
-    //   }
-    //   setSelectedFilters(initialSelectedFilters);
-
-
-    //   const filteredProperties = properties.filter((property) => {
-    //     if (selectedFilters.length === 0) {
-    //       return true;
-    //     }
-  
-    //     let matches = true;
-    //     for (const filter of selectedFilters) {
-    //       const propertyName = filter.name;
-    //       const propertyValue = property[propertyName];
-  
-    //       const filterValue =
-    //         typeof filterData.find((filter) => filter.queryName === filter.name)
-    //           ?.type === "number"
-    //           ? parseInt(filter.value) 
-    //           : filter.value; 
-  
-    //       if (typeof propertyValue === "string") {
-    //         matches = matches && propertyValue == filterValue;
-    //       } else if (typeof propertyValue == "boolean") {
-    //         matches = matches && propertyValue == (filterValue === "true"); 
-    //       } else {
-    //         matches = matches && propertyValue == filterValue;
-    //       }
-    //     }
-    //     return matches;
-    //   });
-  
-    //   setFilteredProperties(filteredProperties);
-    // }, [selectedFilters, properties, router.query]);
-
   return (
-    <Box m="2">
+    <Box marginTop="2">
       <Flex
         cursor="pointer"
-        bg="gray.100"
-        borderBottom="1"
+        bg={color}
+        borderBottom="2"
         borderColor="gray.200"
         paddingTop="2"
         fontWeight="black"
@@ -216,12 +138,18 @@ const Search = ({ properties }) => {
         onClick={() => setShowFilters(!showFilters)}
       >
         <Text>Search Properties</Text>
-        <Icon paddingLeft="2" w="7" marginBottom="4" paddingBottom="0"as={BsFilter} />
+        <Icon
+          paddingLeft="2"
+          w="7"
+          marginBottom="4"
+          paddingBottom="0"
+          as={BsFilter}
+        />
       </Flex>
 
-{/* start filter section */}
+      {/* start filter section */}
       <Flex flexDirection="column" justifyContent="center">
-        <Flex bg="gray.100" justifyContent="center" flexWrap="wrap">
+        <Flex bg={color} justifyContent="center" flexWrap="wrap">
           {showFilters &&
             filters?.map((filter) => (
               <Box key={filter.queryName}>
@@ -256,10 +184,11 @@ const Search = ({ properties }) => {
           marginBottom="4"
           p="4"
           onClick={() => {
-            setFilteredProperties(properties)
-            setSelectedFilters([])
-
-            router.replace(router.pathname)          }}
+            setFilteredProperties(properties);
+            setSelectedFilters([]);
+            router.push('/search')
+            // router.replace(router.pathname);
+          }}
         >
           Reset Filters
         </Button>
@@ -275,15 +204,13 @@ const Search = ({ properties }) => {
 
       {filteredProperties.length === 0 && properties.length > 0 && (
         <>
-        <Stack >
-          <Heading textAlign="center">
-          Sorry!
-          </Heading>
-          <Text fontSize="xl" p="4" textAlign="center">
-   No properties match your current filters. Try adjusting your filters.
-        </Text>
-        </Stack>
-
+          <Stack>
+            <Heading textAlign="center">Sorry!</Heading>
+            <Text fontSize="xl" p="4" textAlign="center">
+              No properties match your current filters. Try adjusting your
+              filters.
+            </Text>
+          </Stack>
         </>
       )}
 

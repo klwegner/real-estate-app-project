@@ -15,6 +15,8 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useState } from 'react';
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -27,6 +29,7 @@ export default function LoginPage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    console.log('hey there')
 
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
@@ -35,14 +38,16 @@ export default function LoginPage() {
 
     const response = await axios.post(`${API_URL}/auth/login`, requestBody);
 
-    // console.log(response.data);
     if (response.status == 200) {
       const token = response.data.authToken;
       localStorage.setItem("authToken", token);
-      router.push("/");
+      localStorage.setItem("user", email);
+      localStorage.setItem("isLoggedIn", true);
+      router.push("/")
+
     } else {
       console.log("Login failed.");
-     setMessage(response)
+     setMessage(response);
      onToggle()
     }
   }
@@ -92,7 +97,6 @@ export default function LoginPage() {
 </Slide>
 
       )}
-
 
         <Flex justifyContent="center" p="4">
           <Button type="submit">Login</Button>

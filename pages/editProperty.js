@@ -11,15 +11,27 @@ import {
   Select,
   Button,
   Divider,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  Slide,
-  useDisclosure 
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
+    NumberInput,
+    NumberInputField,
+    NumberInputStepper,
+    NumberIncrementStepper,
+    NumberDecrementStepper,
+    Spacer,
+    Slide,
+    useDisclosure,
+    Heading, 
+    Tooltip,
+    CloseButton,
+    Image
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { CldUploadButton } from "next-cloudinary";
+import defaultImage from "../public/defaultImage.jpg";
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -33,10 +45,10 @@ function EditPropertyPage() {
   const [description, setDescription] = useState(ds);
   const [address, setAddress] = useState(ad);
   const [propertyType, setPropertyType] = useState(pt);
-  const [squareFootage, setSquareFootage] = useState(sf);
-  const [numBaths, setNumBaths] = useState(baths);
-  const [numBeds, setNumBeds] = useState(beds);
-  const [price, setPrice] = useState(pr);
+  const [squareFootage, setSquareFootage] = useState(parseInt(sf));
+  const [numBaths, setNumBaths] = useState(parseInt(baths));
+  const [numBeds, setNumBeds] = useState(parseInt(beds));
+  const [price, setPrice] = useState(parseInt(pr));
   const [hasHOA, setHasHOA] = useState(hoa);
   const [amenitiesIncluded, setAmenitiesIncluded] = useState(am);
   const [inFloodZone, setInFloodZone] = useState(fl);
@@ -101,7 +113,7 @@ function EditPropertyPage() {
   return (
     <Box>
       <Text fontSize="2xl" p="4" fontWeight="bold">
-        Add a Property
+        Edit {name}
       </Text>
 
       <Box p="4">
@@ -111,6 +123,19 @@ function EditPropertyPage() {
               The Basics
             </Text>
           </Flex>
+<Flex justifyContent="center" m="4">
+<Image
+            src={imageUrl}
+            fallbackSrc="https://www.renderhub.com/virtual3d/apartment-building-10/apartment-building-10-01.jpg"
+            width="400"
+            height="260"
+            alt="property"
+          />
+</Flex>
+         
+
+          <Tooltip label='Name of Property' bg='gray.300' color='black'>
+
           <Input
             placeholder={name}
             type="text"
@@ -118,8 +143,12 @@ function EditPropertyPage() {
             value={name}
             required
             onChange={handleName}
+            marginBottom="4"
           />
+          </Tooltip>
 
+
+          <Tooltip label='Address' bg='gray.300' color='black'>
           <Input
             placeholder={ad}
             type="text"
@@ -127,7 +156,12 @@ function EditPropertyPage() {
             value={address}
             required
             onChange={handleAddress}
+            marginBottom="4"
+
           />
+          </Tooltip>
+
+          <Tooltip label='Description' bg='gray.300' color='black'>
 
           <Textarea
             placeholder={ds}
@@ -137,18 +171,30 @@ function EditPropertyPage() {
             onChange={handleDescription}
             rows="4"
             cols="33"
-          ></Textarea>
+            marginBottom="4"
 
+          ></Textarea>
+          </Tooltip>
+
+          <Flex justifyContent="center">
+
+          <Tooltip label='Type of Property' bg='gray.300' color='black'>
           <Select
             placeholder={pt}
             name="propertyType"
             value={propertyType}
             required
             onChange={handlePropertyType}
+            w="auto"
+
           >
             <option value="Rental">Rental</option>
             <option value="For Sale">For Sale</option>
           </Select>
+
+          </Tooltip>
+
+</Flex>
 
           <Divider p="2" />
 
@@ -158,7 +204,7 @@ function EditPropertyPage() {
             </Text>
           </Flex>
           <Flex justifyContent="center">
-            <Button>
+            {/* <Button> */}
               <CldUploadButton
                 uploadPreset="nextApp"
                 onSuccess={(result) => {
@@ -167,7 +213,7 @@ function EditPropertyPage() {
               >
                 Upload an Image
               </CldUploadButton>
-            </Button>
+            {/* </Button> */}
           </Flex>
 
           <Divider p="2" />
@@ -178,6 +224,9 @@ function EditPropertyPage() {
             </Text>
           </Flex>
 
+          <Flex justifyContent="space-around">
+
+          <Tooltip label='Price' bg='gray.300' color='black'>
           <Input
             placeholder={pr}
             type="number"
@@ -185,9 +234,14 @@ function EditPropertyPage() {
             value={price}
             required
             onChange={handlePrice}
-          />
+            w="auto"
 
-          <Flex justifyContent="center">
+          />
+          </Tooltip>
+
+          <Spacer/>
+
+          <Tooltip label='Sq. Ft.' bg='gray.300' color='black'>
             <Input
               placeholder={sf}
               type="number"
@@ -195,25 +249,49 @@ function EditPropertyPage() {
               value={squareFootage}
               required
               onChange={handleSquareFootage}
-            />
+              w="auto"
 
-            <Input
-              placeholder={baths}
+            />
+</Tooltip>
+
+<Spacer/>
+
+<Tooltip label='Number of Baths' bg='gray.300' color='black'>
+<NumberInput min={1} max={10} defaultValue={numBaths}>
+  <NumberInputField
+                placeholder={baths}
               type="number"
               name="numBaths"
               value={numBaths}
               required
-              onChange={handleNumBaths}
-            />
+              onChange={handleNumBaths}/>
+  <NumberInputStepper>
+    <NumberIncrementStepper />
+    <NumberDecrementStepper />
+  </NumberInputStepper>
+</NumberInput>
+</Tooltip>
 
-            <Input
-              placeholder={beds}
+<Spacer/>
+
+
+<Tooltip label='Number of Beds' bg='gray.300' color='black'>
+
+
+<NumberInput min={1} max={10} defaultValue={numBeds}>
+  <NumberInputField
+                placeholder={beds}
               type="number"
               name="numBeds"
               value={numBeds}
               required
-              onChange={handleNumBeds}
-            />
+              onChange={handleNumBeds}/>
+  <NumberInputStepper>
+    <NumberIncrementStepper />
+    <NumberDecrementStepper />
+  </NumberInputStepper>
+</NumberInput>
+</Tooltip>
           </Flex>
 
           <Divider p="2" />
@@ -224,7 +302,8 @@ function EditPropertyPage() {
             </Text>
           </Flex>
 
-          <Flex justifyContent="center">
+          <Flex justifyContent="center" gap="10" marginBottom="4">
+          <Tooltip label='HOA' bg='gray.300' color='black'>
             <Select
               placeholder={hoa}
               name="hasHOA"
@@ -234,7 +313,9 @@ function EditPropertyPage() {
               <option value="true">True</option>
               <option value="false">False</option>
             </Select>
+            </Tooltip>
 
+            <Tooltip label='Flood Zone' bg='gray.300' color='black'>
             <Select
               placeholder={fl}
               name="inFloodZone"
@@ -244,8 +325,11 @@ function EditPropertyPage() {
               <option value="true">True</option>
               <option value="false">False</option>
             </Select>
+            </Tooltip>
+
           </Flex>
 
+          <Tooltip label='Amenities' bg='gray.300' color='black'>
           <Input
             placeholder={am}
             type="text"
@@ -253,8 +337,10 @@ function EditPropertyPage() {
             value={amenitiesIncluded}
             onChange={handleAmenities}
           />
+          </Tooltip>
 
-{message && (
+
+          {message && isVisible && (
   <Slide direction='bottom' in={isOpen} style={{ zIndex: 10 }}>
   <Alert
   status='error'
@@ -270,6 +356,13 @@ function EditPropertyPage() {
   <AlertDescription maxWidth='sm'>
     {message}
   </AlertDescription>
+  <CloseButton
+        alignSelf='flex-start'
+        position='relative'
+        right={-1}
+        top={-1}
+        onClick={onClose}
+      />
 </Alert>
 
 </Slide>

@@ -8,6 +8,8 @@ import Link from "next/link";
 
 import { useRouter } from "next/navigation";
 // import { ButtonGroup } from "react-bootstrap";
+import { useState, useEffect } from "react";
+
 
 const API_URL = "http://localhost:5005";
 
@@ -25,6 +27,7 @@ export async function getServerSideProps(context) {
       },
     };
   }
+
 
   const response = await axios.get(`${API_URL}/api/properties/${id}`);
   console.log(response);
@@ -44,8 +47,25 @@ export async function getServerSideProps(context) {
   };
 }
 
+
+
 export default function PropertyDetailsPage({ property, error, errorMessage }) {
+  const [submittingUser, setSubmittingUser] = useState('');
   const router = useRouter();
+  const [loggedIn, setLoggedIn] = useState(false);
+
+
+
+
+  useEffect(()=> {
+    const status = localStorage.getItem("isLoggedIn");
+const user = localStorage.getItem("user");
+    setLoggedIn(status);
+    setSubmittingUser(user);
+  },[])
+
+
+
 
   if (error) {
     return <div>Error: {errorMessage}</div>;
@@ -62,20 +82,26 @@ export default function PropertyDetailsPage({ property, error, errorMessage }) {
       </Flex>
 <Flex justifyContent="center">
 
-<ButtonGroup>
 
-        <Button>
-          <Link
-            href={`/editProperty?id=${property._id}&nm=${property.name}&pt=${property.propertyType}&ds=${property.description}&ad=${property.address}&sf=${property.squareFootage}&baths=${property.numBaths}&beds=${property.numBeds}&pr=${property.price}&hoa=${property.hasHOA}&fl=${property.inFloodZone}&am=${property.amenitiesIncluded}&img=${property.imageUrl}`}
-            passHref
-          >
-            Edit this Property
-          </Link>
-        </Button>
-        <Button onClick={() => deleteProperty(property._id, router)}>
-          Delete This Property
-        </Button>
+
+{property.submittingUser === submittingUser && loggedIn && (
+  <ButtonGroup>
+
+<Button>
+  <Link
+    href={`/editProperty?id=${property._id}&nm=${property.name}&pt=${property.propertyType}&ds=${property.description}&ad=${property.address}&sf=${property.squareFootage}&baths=${property.numBaths}&beds=${property.numBeds}&pr=${property.price}&hoa=${property.hasHOA}&fl=${property.inFloodZone}&am=${property.amenitiesIncluded}&img=${property.imageUrl}`}
+    passHref
+  >
+    Edit this Property
+  </Link>
+</Button>
+<Button onClick={() => deleteProperty(property._id, router)}>
+  Delete This Property
+</Button>
 </ButtonGroup>
+
+)}
+
 </Flex>
 
     </Box>

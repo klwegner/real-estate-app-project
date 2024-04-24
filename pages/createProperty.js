@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import {
   Flex,
@@ -22,10 +22,14 @@ import {
     NumberDecrementStepper,
     Spacer,
     Slide,
-    useDisclosure 
+    useDisclosure,
+    Heading, 
+    Tooltip,
+    CloseButton
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { CldUploadButton } from "next-cloudinary";
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -34,16 +38,21 @@ function AddPropertyPage() {
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
   const [propertyType, setPropertyType] = useState("");
-  const [squareFootage, setSquareFootage] = useState(null);
-  const [numBaths, setNumBaths] = useState(null);
-  const [numBeds, setNumBeds] = useState(null);
-  const [price, setPrice] = useState(null);
-  const [hasHOA, setHasHOA] = useState(null);
+  const [squareFootage, setSquareFootage] = useState("");
+  const [numBaths, setNumBaths] = useState("");
+  const [numBeds, setNumBeds] = useState("");
+  const [price, setPrice] = useState("");
+  const [hasHOA, setHasHOA] = useState("");
   const [amenitiesIncluded, setAmenitiesIncluded] = useState("");
-  const [inFloodZone, setInFloodZone] = useState(null);
+  const [inFloodZone, setInFloodZone] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [message, setMessage] = useState(undefined);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [submittingUser, setSubmittingUser] = useState('');
   const router = useRouter();
+  const { isOpen, onToggle } = useDisclosure();
+
+
 
   const handleName = (e) => setName(e.target.value);
   const handleDescription = (e) => setDescription(e.target.value);
@@ -57,10 +66,28 @@ function AddPropertyPage() {
   const handleAmenities = (e) => setAmenitiesIncluded(e.target.value);
   const handleInFloodZone = (e) => setInFloodZone(e.target.value);
 
-  const { isOpen, onToggle } = useDisclosure()
 
+
+  useEffect(()=> {
+    const status = localStorage.getItem("isLoggedIn");
+const user = localStorage.getItem("user");
+    setLoggedIn(status);
+    setSubmittingUser(user);
+  },[])
+
+
+
+  const {
+    isOpen: isVisible,
+    onClose,
+    onOpen,
+  } = useDisclosure({ defaultIsOpen: true })
+
+
+  
 
   const handleSubmitProperty = (event) => {
+
     event.preventDefault();
     const requestBody = {
       name,
@@ -75,8 +102,9 @@ function AddPropertyPage() {
       amenitiesIncluded,
       inFloodZone,
       imageUrl,
+      submittingUser
     };
-    // console.log('here is the req: ', requestBody);
+     console.log('here is the req: ', requestBody);
 
     axios
       .post(`${API_URL}/api/addProperty`, requestBody, {
@@ -95,6 +123,7 @@ function AddPropertyPage() {
         
         setMessage(err.toString())
         onToggle()
+        onOpen()
       }
       );
       // .catch((err) => console.error(err.toString()));
@@ -102,7 +131,23 @@ function AddPropertyPage() {
   };
 
   return (
-    <Box m="2">
+    <>
+<>
+{!loggedIn && (
+  <Box textAlign="center">
+  <Heading  marginTop="8">
+  We got a problem here.
+</Heading>
+<Text marginTop="8" marginBottom="8" textAlign="center" fontSize="2xl">You're not logged in!</Text>
+<Link href="/loginPage">Why don't you login now?</Link>
+  </Box>
+
+
+)}
+</>
+
+    {loggedIn && (
+      <Box m="2">
       <Text fontSize="2xl" p="4" fontWeight="bold">
         Add a Property
       </Text>
@@ -115,6 +160,8 @@ function AddPropertyPage() {
             </Text>
           </Flex>
 
+          <Tooltip label='Name of Property' bg='gray.300' color='black'>
+
           <Input
             placeholder="Property Name"
             type="text"
@@ -124,6 +171,10 @@ function AddPropertyPage() {
             onChange={handleName}
             marginBottom="4"
           />
+          </Tooltip>
+
+          <Tooltip label='Address' bg='gray.300' color='black'>
+
 
           <Input
             placeholder="Address"
@@ -134,6 +185,10 @@ function AddPropertyPage() {
             onChange={handleAddress}
             marginBottom="4"
           />
+          </Tooltip>
+
+          <Tooltip label='Description' bg='gray.300' color='black'>
+
 
           <Textarea
             placeholder="Description"
@@ -145,10 +200,12 @@ function AddPropertyPage() {
             cols="33"
             marginBottom="4"
           ></Textarea>
+</Tooltip>
 
 <Flex justifyContent="center">
 
 
+<Tooltip label='Type of Property' bg='gray.300' color='black'>
 
           <Select
             placeholder="Property Type"
@@ -161,6 +218,7 @@ function AddPropertyPage() {
             <option value="Rental">Rental</option>
             <option value="For Sale">For Sale</option>
           </Select>
+          </Tooltip>
 
           </Flex>
 
@@ -172,7 +230,7 @@ function AddPropertyPage() {
             </Text>
           </Flex>
           <Flex justifyContent="center">
-            <Button>
+            {/* <Button> */}
               <CldUploadButton
                 uploadPreset="nextApp"
                 onSuccess={(result) => {
@@ -183,7 +241,7 @@ function AddPropertyPage() {
               >
                 Upload an Image
               </CldUploadButton>
-            </Button>
+            {/* </Button> */}
           </Flex>
 
           <Divider p="2" />
@@ -193,11 +251,11 @@ function AddPropertyPage() {
               The Numbers
             </Text>
           </Flex>
+
           <Flex justifyContent="space-around">
 
-
-
-<Input
+          <Tooltip label='Price' bg='gray.300' color='black'>
+          <Input
             placeholder="Price"
             type="number"
             name="price"
@@ -206,7 +264,11 @@ function AddPropertyPage() {
             onChange={handlePrice}
             w="auto"
           />
+          </Tooltip>
+
 <Spacer/>
+
+<Tooltip label='Sq. Ft.' bg='gray.300' color='black'>
 
             <Input
               placeholder="Square Footage"
@@ -217,12 +279,15 @@ function AddPropertyPage() {
               onChange={handleSquareFootage}
               w="auto"
             />
+            </Tooltip>
 
 <Spacer/>
+<Tooltip label='Number of Baths' bg='gray.300' color='black'>
+
 <NumberInput min={1} max={10}>
   <NumberInputField
    placeholder="Baths"
-              type="number"
+              // type="number"
               name="numBaths"
               value={numBaths}
               required
@@ -232,23 +297,17 @@ function AddPropertyPage() {
     <NumberDecrementStepper />
   </NumberInputStepper>
 </NumberInput>
+</Tooltip>
 
 <Spacer/>
 
-            {/* <Input
-              placeholder="Number of Baths"
-              type="number"
-              name="numBaths"
-              value={numBaths}
-              required
-              onChange={handleNumBaths}
-            /> */}
 
+            <Tooltip label='Number of Beds' bg='gray.300' color='black'>
 
             <NumberInput min={1} max={10}>
   <NumberInputField
    placeholder="Beds"
-              type="number"
+              // type="number"
               name="numBeds"
               value={numBeds}
               required
@@ -258,17 +317,8 @@ function AddPropertyPage() {
     <NumberDecrementStepper />
   </NumberInputStepper>
 </NumberInput>
+</Tooltip>
 
-
-{/* 
-            <Input
-              placeholder="Number of Beds"
-              type="number"
-              name="numBeds"
-              value={numBeds}
-              required
-              onChange={handleNumBeds}
-            /> */}
 
           </Flex>
 
@@ -281,6 +331,8 @@ function AddPropertyPage() {
           </Flex>
 
           <Flex justifyContent="center" gap="10" marginBottom="4">
+          <Tooltip label='HOA' bg='gray.300' color='black'>
+
             <Select
               placeholder="Has HOA?"
               name="hasHOA"
@@ -291,6 +343,9 @@ function AddPropertyPage() {
               <option value="true">True</option>
               <option value="false">False</option>
             </Select>
+            </Tooltip>
+
+            <Tooltip label='Flood Zone' bg='gray.300' color='black'>
 
             <Select
               placeholder="In Flood Zone?"
@@ -302,7 +357,12 @@ function AddPropertyPage() {
               <option value="true">True</option>
               <option value="false">False</option>
             </Select>
+
+            </Tooltip>
           </Flex>
+
+
+          <Tooltip label='Amenities' bg='gray.300' color='black'>
 
           <Input
             placeholder="Amenities Included"
@@ -311,9 +371,17 @@ function AddPropertyPage() {
             value={amenitiesIncluded}
             onChange={handleAmenities}
           />
+</Tooltip>
 
+{/* 
+<Input
+            placeholder={submittingUser}
+            type="text"
+            name="submittingUser"
+            value={submittingUser}
+          /> */}
 
-{message && (
+{message && isVisible && (
   <Slide direction='bottom' in={isOpen} style={{ zIndex: 10 }}>
   <Alert
   status='error'
@@ -329,22 +397,18 @@ function AddPropertyPage() {
   <AlertDescription maxWidth='sm'>
     {message}
   </AlertDescription>
+  <CloseButton
+        alignSelf='flex-start'
+        position='relative'
+        right={-1}
+        top={-1}
+        onClick={onClose}
+      />
 </Alert>
 
 </Slide>
 
       )}
-{/* 
-{message && (
-            {/* <Box backgroundColor="red">
-            <Text textAlign="center">{message}. Are you <Link fontWeight="bold" href="/loginPage" passHref>
-logged in?</Link>
-</Text>
-
-            </Box>
-
-            
-          )} */}
 
           <Flex justifyContent="center" p="4">
             <Button type="submit">Submit</Button>
@@ -352,7 +416,10 @@ logged in?</Link>
         </form>
       </Box>
     </Box>
+    )}
+    </>
   );
 }
 
 export default AddPropertyPage;
+
