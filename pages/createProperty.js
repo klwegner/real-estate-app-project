@@ -128,9 +128,9 @@ function AddPropertyPage() {
               textAlign="center"
               fontSize="2xl"
             >
-              You're not logged in!
+              You&apos;re not logged in!
             </Text>
-            <Link href="/loginPage">Why don't you login now?</Link>
+            <Link href="/loginPage">Why don&apos;t you login now?</Link>
           </Box>
         )}
       </>
