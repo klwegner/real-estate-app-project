@@ -11,36 +11,35 @@ import {
   Select,
   Button,
   Divider,
-    Alert,
-    AlertIcon,
-    AlertTitle,
-    AlertDescription,
-    NumberInput,
-    NumberInputField,
-    NumberInputStepper,
-    NumberIncrementStepper,
-    NumberDecrementStepper,
-    Spacer,
-    Slide,
-    useDisclosure,
-    Heading, 
-    Tooltip,
-    CloseButton,
-    Image
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  Spacer,
+  Slide,
+  useDisclosure,
+  Heading,
+  Tooltip,
+  CloseButton,
+  Image,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { CldUploadButton } from "next-cloudinary";
 import defaultImage from "../public/defaultImage.jpg";
 
-
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 function EditPropertyPage() {
+  const { isOpen, onToggle } = useDisclosure();
+  const router = useRouter();
+  const { id, nm, ds, ad, pt, sf, baths, beds, pr, hoa, fl, am, img } =
+    router.query;
 
-    const { isOpen, onToggle } = useDisclosure()
-    const router = useRouter();
-    const { id, nm, ds, ad, pt, sf, baths, beds, pr, hoa, fl, am, img } = router.query;
-    
   const [name, setName] = useState(nm);
   const [description, setDescription] = useState(ds);
   const [address, setAddress] = useState(ad);
@@ -85,8 +84,8 @@ function EditPropertyPage() {
     };
     // console.log('here is the req: ', requestBody);
 
-    axios.
-    put(`${API_URL}/api/properties/${id}`, requestBody, {
+    axios
+      .put(`${API_URL}/api/properties/${id}`, requestBody, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },
@@ -94,20 +93,17 @@ function EditPropertyPage() {
       .then((response) => {
         console.log(response);
         if (response.status === 200) {
-        //   console.log(response.data);
-          const { id } = router.query; 
+          //   console.log(response.data);
+          const { id } = router.query;
 
           router.push(`/property/${id}`);
         }
       })
-      .catch((err) => 
-      {
-        setMessage(err.toString())
-        onToggle()
-
-    });
-      // .catch((err) => console.error(err.toString()));
-
+      .catch((err) => {
+        setMessage(err.toString());
+        onToggle();
+      });
+    // .catch((err) => console.error(err.toString()));
   };
 
   return (
@@ -123,78 +119,68 @@ function EditPropertyPage() {
               The Basics
             </Text>
           </Flex>
-<Flex justifyContent="center" m="4">
-<Image
-            src={imageUrl}
-            fallbackSrc="https://www.renderhub.com/virtual3d/apartment-building-10/apartment-building-10-01.jpg"
-            width="400"
-            height="260"
-            alt="property"
-          />
-</Flex>
-         
+          <Flex justifyContent="center" m="4">
+            <Image
+              src={imageUrl}
+              fallbackSrc="https://www.renderhub.com/virtual3d/apartment-building-10/apartment-building-10-01.jpg"
+              width="400"
+              height="260"
+              alt="property"
+            />
+          </Flex>
 
-          <Tooltip label='Name of Property' bg='gray.300' color='black'>
-
-          <Input
-            placeholder={name}
-            type="text"
-            name="name"
-            value={name}
-            required
-            onChange={handleName}
-            marginBottom="4"
-          />
+          <Tooltip label="Name of Property" bg="gray.300" color="black">
+            <Input
+              placeholder={name}
+              type="text"
+              name="name"
+              value={name}
+              required
+              onChange={handleName}
+              marginBottom="4"
+            />
           </Tooltip>
 
-
-          <Tooltip label='Address' bg='gray.300' color='black'>
-          <Input
-            placeholder={ad}
-            type="text"
-            name="address"
-            value={address}
-            required
-            onChange={handleAddress}
-            marginBottom="4"
-
-          />
+          <Tooltip label="Address" bg="gray.300" color="black">
+            <Input
+              placeholder={ad}
+              type="text"
+              name="address"
+              value={address}
+              required
+              onChange={handleAddress}
+              marginBottom="4"
+            />
           </Tooltip>
 
-          <Tooltip label='Description' bg='gray.300' color='black'>
-
-          <Textarea
-            placeholder={ds}
-            type="text"
-            name="description"
-            value={description}
-            onChange={handleDescription}
-            rows="4"
-            cols="33"
-            marginBottom="4"
-
-          ></Textarea>
+          <Tooltip label="Description" bg="gray.300" color="black">
+            <Textarea
+              placeholder={ds}
+              type="text"
+              name="description"
+              value={description}
+              onChange={handleDescription}
+              rows="4"
+              cols="33"
+              marginBottom="4"
+            ></Textarea>
           </Tooltip>
 
           <Flex justifyContent="center">
-
-          <Tooltip label='Type of Property' bg='gray.300' color='black'>
-          <Select
-            placeholder={pt}
-            name="propertyType"
-            value={propertyType}
-            required
-            onChange={handlePropertyType}
-            w="auto"
-
-          >
-            <option value="Rental">Rental</option>
-            <option value="For Sale">For Sale</option>
-          </Select>
-
-          </Tooltip>
-
-</Flex>
+            <Tooltip label="Type of Property" bg="gray.300" color="black">
+              <Select
+                placeholder={pt}
+                name="propertyType"
+                value={propertyType}
+                required
+                onChange={handlePropertyType}
+                w="auto"
+              >
+                <option value="Rental">Rental</option>
+                <option value="For Sale">For Sale</option>
+              </Select>
+            </Tooltip>
+          </Flex>
 
           <Divider p="2" />
 
@@ -205,14 +191,14 @@ function EditPropertyPage() {
           </Flex>
           <Flex justifyContent="center">
             {/* <Button> */}
-              <CldUploadButton
-                uploadPreset="nextApp"
-                onSuccess={(result) => {
-                  setImageUrl(result.info.secure_url);
-                }}
-              >
-                Upload an Image
-              </CldUploadButton>
+            <CldUploadButton
+              uploadPreset="nextApp"
+              onSuccess={(result) => {
+                setImageUrl(result.info.secure_url);
+              }}
+            >
+              Upload an Image
+            </CldUploadButton>
             {/* </Button> */}
           </Flex>
 
@@ -225,73 +211,69 @@ function EditPropertyPage() {
           </Flex>
 
           <Flex justifyContent="space-around">
+            <Tooltip label="Price" bg="gray.300" color="black">
+              <Input
+                placeholder={pr}
+                type="number"
+                name="price"
+                value={price}
+                required
+                onChange={handlePrice}
+                w="auto"
+              />
+            </Tooltip>
 
-          <Tooltip label='Price' bg='gray.300' color='black'>
-          <Input
-            placeholder={pr}
-            type="number"
-            name="price"
-            value={price}
-            required
-            onChange={handlePrice}
-            w="auto"
+            <Spacer />
 
-          />
-          </Tooltip>
+            <Tooltip label="Sq. Ft." bg="gray.300" color="black">
+              <Input
+                placeholder={sf}
+                type="number"
+                name="squareFootage"
+                value={squareFootage}
+                required
+                onChange={handleSquareFootage}
+                w="auto"
+              />
+            </Tooltip>
 
-          <Spacer/>
+            <Spacer />
 
-          <Tooltip label='Sq. Ft.' bg='gray.300' color='black'>
-            <Input
-              placeholder={sf}
-              type="number"
-              name="squareFootage"
-              value={squareFootage}
-              required
-              onChange={handleSquareFootage}
-              w="auto"
+            <Tooltip label="Number of Baths" bg="gray.300" color="black">
+              <NumberInput min={1} max={10} defaultValue={numBaths}>
+                <NumberInputField
+                  placeholder={baths}
+                  type="number"
+                  name="numBaths"
+                  value={numBaths}
+                  required
+                  onChange={handleNumBaths}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </Tooltip>
 
-            />
-</Tooltip>
+            <Spacer />
 
-<Spacer/>
-
-<Tooltip label='Number of Baths' bg='gray.300' color='black'>
-<NumberInput min={1} max={10} defaultValue={numBaths}>
-  <NumberInputField
-                placeholder={baths}
-              type="number"
-              name="numBaths"
-              value={numBaths}
-              required
-              onChange={handleNumBaths}/>
-  <NumberInputStepper>
-    <NumberIncrementStepper />
-    <NumberDecrementStepper />
-  </NumberInputStepper>
-</NumberInput>
-</Tooltip>
-
-<Spacer/>
-
-
-<Tooltip label='Number of Beds' bg='gray.300' color='black'>
-
-
-<NumberInput min={1} max={10} defaultValue={numBeds}>
-  <NumberInputField
-                placeholder={beds}
-              type="number"
-              name="numBeds"
-              value={numBeds}
-              required
-              onChange={handleNumBeds}/>
-  <NumberInputStepper>
-    <NumberIncrementStepper />
-    <NumberDecrementStepper />
-  </NumberInputStepper>
-</NumberInput>
-</Tooltip>
+            <Tooltip label="Number of Beds" bg="gray.300" color="black">
+              <NumberInput min={1} max={10} defaultValue={numBeds}>
+                <NumberInputField
+                  placeholder={beds}
+                  type="number"
+                  name="numBeds"
+                  value={numBeds}
+                  required
+                  onChange={handleNumBeds}
+                />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+            </Tooltip>
           </Flex>
 
           <Divider p="2" />
@@ -303,71 +285,67 @@ function EditPropertyPage() {
           </Flex>
 
           <Flex justifyContent="center" gap="10" marginBottom="4">
-          <Tooltip label='HOA' bg='gray.300' color='black'>
-            <Select
-              placeholder={hoa}
-              name="hasHOA"
-              value={hasHOA}
-              onChange={handleHoa}
-            >
-              <option value="true">True</option>
-              <option value="false">False</option>
-            </Select>
+            <Tooltip label="HOA" bg="gray.300" color="black">
+              <Select
+                placeholder={hoa}
+                name="hasHOA"
+                value={hasHOA}
+                onChange={handleHoa}
+              >
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </Select>
             </Tooltip>
 
-            <Tooltip label='Flood Zone' bg='gray.300' color='black'>
-            <Select
-              placeholder={fl}
-              name="inFloodZone"
-              value={inFloodZone}
-              onChange={handleInFloodZone}
-            >
-              <option value="true">True</option>
-              <option value="false">False</option>
-            </Select>
+            <Tooltip label="Flood Zone" bg="gray.300" color="black">
+              <Select
+                placeholder={fl}
+                name="inFloodZone"
+                value={inFloodZone}
+                onChange={handleInFloodZone}
+              >
+                <option value="true">True</option>
+                <option value="false">False</option>
+              </Select>
             </Tooltip>
-
           </Flex>
 
-          <Tooltip label='Amenities' bg='gray.300' color='black'>
-          <Input
-            placeholder={am}
-            type="text"
-            name="amenities"
-            value={amenitiesIncluded}
-            onChange={handleAmenities}
-          />
+          <Tooltip label="Amenities" bg="gray.300" color="black">
+            <Input
+              placeholder={am}
+              type="text"
+              name="amenities"
+              value={amenitiesIncluded}
+              onChange={handleAmenities}
+            />
           </Tooltip>
 
-
           {message && isVisible && (
-  <Slide direction='bottom' in={isOpen} style={{ zIndex: 10 }}>
-  <Alert
-  status='error'
-  variant='subtle'
-  flexDirection='column'
-  alignItems='center'
-  justifyContent='center'
-  textAlign='center'
-  height='200px'
->
-  <AlertIcon boxSize='40px' mr={0} />
-  <AlertTitle mt={4} mb={1} fontSize='lg'>Error</AlertTitle>
-  <AlertDescription maxWidth='sm'>
-    {message}
-  </AlertDescription>
-  <CloseButton
-        alignSelf='flex-start'
-        position='relative'
-        right={-1}
-        top={-1}
-        onClick={onClose}
-      />
-</Alert>
-
-</Slide>
-
-      )}
+            <Slide direction="bottom" in={isOpen} style={{ zIndex: 10 }}>
+              <Alert
+                status="error"
+                variant="subtle"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+                textAlign="center"
+                height="200px"
+              >
+                <AlertIcon boxSize="40px" mr={0} />
+                <AlertTitle mt={4} mb={1} fontSize="lg">
+                  Error
+                </AlertTitle>
+                <AlertDescription maxWidth="sm">{message}</AlertDescription>
+                <CloseButton
+                  alignSelf="flex-start"
+                  position="relative"
+                  right={-1}
+                  top={-1}
+                  onClick={onClose}
+                />
+              </Alert>
+            </Slide>
+          )}
 
           <Flex justifyContent="center" p="4">
             <Button type="submit">Submit</Button>

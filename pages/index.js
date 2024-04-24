@@ -23,7 +23,6 @@ import { BsGridFill } from "react-icons/bs";
 import millify from "millify";
 
 const Home = () => {
-
   const [propertiesForSale, setPropertiesForSale] = useState([]);
   const [propertiesForRent, setPropertiesForRent] = useState([]);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -70,7 +69,6 @@ const Home = () => {
 
   return (
     <Box backgroundColor="transparent">
-
       <Banner
         purpose="RENT A HOME"
         title1="Rental Properties With"
@@ -156,7 +154,7 @@ const Home = () => {
         linkName="/search?purpose=for-sale"
         imageUrl="https://static.55places.com/blog/media/fl-4891d846a429b15c7bf4fea2478e27ee.jpg"
       />
-    
+
       <SimpleGrid
         m="4"
         spacing={4}
@@ -223,13 +221,11 @@ const Home = () => {
         ))}
       </SimpleGrid>
 
-<Flex justifyContent="center">
-<Button onClick={toggleColorMode}>
-        {colorMode === "light" ? "Dark Mode" : "Light Mode"}
-      </Button>
-
-</Flex>
-
+      <Flex justifyContent="center">
+        <Button onClick={toggleColorMode}>
+          {colorMode === "light" ? "Dark Mode" : "Light Mode"}
+        </Button>
+      </Flex>
     </Box>
   );
 };
@@ -271,7 +267,6 @@ export const Banner = ({
   </Flex>
 );
 
-
 export const Banner2 = ({
   purpose,
   title1,
@@ -283,7 +278,6 @@ export const Banner2 = ({
   imageUrl,
 }) => (
   <Flex flexWrap="wrap" justifyContent="center" alignItems="center" m="10">
-    
     <Box p="5">
       <Text color="gray.500" fontSize="sm" fontWeight="medium" m="0">
         {purpose}

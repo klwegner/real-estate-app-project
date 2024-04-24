@@ -21,7 +21,7 @@ const Property = ({
     hasHOA,
     amenitiesIncluded,
     inFloodZone,
-    submittingUser
+    submittingUser,
   },
 }) => {
   return (
@@ -82,7 +82,7 @@ const Property = ({
             {/* {description.length > 120
               ? `${description.substring(0, 120)}...`
               : description} */}
-              {description}
+            {description}
           </Text>
 
           <Text fontSize="sm">
